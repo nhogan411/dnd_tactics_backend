@@ -94,29 +94,29 @@ item_records = items.map { |i| Item.create!(i) }
 # User 1
 user1 = User.create!(first_name: "Ayla", last_name: "Rivers", email: "ayla@example.com")
 
-char1 = Character.create!(name: "Thorne", user: user1, race: race_human, subrace: subrace_variant_human, character_class: class_barbarian, subclass: subclass_totem)
-char2 = Character.create!(name: "Nim", user: user1, race: race_elf, subrace: subrace_high_elf, character_class: class_rogue, subclass: subclass_assassin)
-char3 = Character.create!(name: "Durgan", user: user1, race: race_dwarf, subrace: subrace_mountain_dwarf, character_class: class_fighter, subclass: subclass_battlemaster)
-char4 = Character.create!(name: "Sera", user: user1, race: race_elf, subrace: subrace_wood_elf, character_class: class_rogue, subclass: subclass_thief)
-char5 = Character.create!(name: "Bram", user: user1, race: race_human, subrace: subrace_standard_human, character_class: class_fighter, subclass: subclass_champion)
+char1 = Character.create!(name: "Thorne", user: user1, race: race_human, subrace: subrace_variant_human, character_class: class_barbarian, subclass: subclass_totem, level: 1, movement_speed: 30, max_hp: 12, visibility_range: 60)
+char2 = Character.create!(name: "Nim", user: user1, race: race_elf, subrace: subrace_high_elf, character_class: class_rogue, subclass: subclass_assassin, level: 1, movement_speed: 30, max_hp: 8, visibility_range: 60)
+char3 = Character.create!(name: "Durgan", user: user1, race: race_dwarf, subrace: subrace_mountain_dwarf, character_class: class_fighter, subclass: subclass_battlemaster, level: 1, movement_speed: 25, max_hp: 10, visibility_range: 60)
+char4 = Character.create!(name: "Sera", user: user1, race: race_elf, subrace: subrace_wood_elf, character_class: class_rogue, subclass: subclass_thief, level: 1, movement_speed: 30, max_hp: 8, visibility_range: 60)
+char5 = Character.create!(name: "Bram", user: user1, race: race_human, subrace: subrace_standard_human, character_class: class_fighter, subclass: subclass_champion, level: 1, movement_speed: 30, max_hp: 10, visibility_range: 60)
 
 # User 2
 user2 = User.create!(first_name: "Kellen", last_name: "Voss", email: "kellen@example.com")
 
-char6 = Character.create!(name: "Kael", user: user2, race: race_elf, subrace: subrace_high_elf, character_class: class_fighter, subclass: subclass_battlemaster)
-char7 = Character.create!(name: "Lira", user: user2, race: race_dwarf, subrace: subrace_hill_dwarf, character_class: class_barbarian, subclass: subclass_berserker)
-char8 = Character.create!(name: "Tovin", user: user2, race: race_human, subrace: subrace_variant_human, character_class: class_rogue, subclass: subclass_thief)
-char9 = Character.create!(name: "Runa", user: user2, race: race_elf, subrace: subrace_wood_elf, character_class: class_rogue, subclass: subclass_assassin)
-char10 = Character.create!(name: "Brek", user: user2, race: race_dwarf, subrace: subrace_mountain_dwarf, character_class: class_barbarian, subclass: subclass_totem)
+char6 = Character.create!(name: "Kael", user: user2, race: race_elf, subrace: subrace_high_elf, character_class: class_fighter, subclass: subclass_battlemaster, level: 1, movement_speed: 30, max_hp: 10, visibility_range: 60)
+char7 = Character.create!(name: "Lira", user: user2, race: race_dwarf, subrace: subrace_hill_dwarf, character_class: class_barbarian, subclass: subclass_berserker, level: 1, movement_speed: 25, max_hp: 12, visibility_range: 60)
+char8 = Character.create!(name: "Tovin", user: user2, race: race_human, subrace: subrace_variant_human, character_class: class_rogue, subclass: subclass_thief, level: 1, movement_speed: 30, max_hp: 8, visibility_range: 60)
+char9 = Character.create!(name: "Runa", user: user2, race: race_elf, subrace: subrace_wood_elf, character_class: class_rogue, subclass: subclass_assassin, level: 1, movement_speed: 30, max_hp: 8, visibility_range: 60)
+char10 = Character.create!(name: "Brek", user: user2, race: race_dwarf, subrace: subrace_mountain_dwarf, character_class: class_barbarian, subclass: subclass_totem, level: 1, movement_speed: 25, max_hp: 12, visibility_range: 60)
 
 # User 3
 user3 = User.create!(first_name: "Mira", last_name: "Dalca", email: "mira@example.com")
 
-char11 = Character.create!(name: "Finn", user: user3, race: race_human, subrace: subrace_standard_human, character_class: class_fighter, subclass: subclass_champion)
-char12 = Character.create!(name: "Vex", user: user3, race: race_elf, subrace: subrace_high_elf, character_class: class_rogue, subclass: subclass_assassin)
-char13 = Character.create!(name: "Orla", user: user3, race: race_dwarf, subrace: subrace_hill_dwarf, character_class: class_barbarian, subclass: subclass_berserker)
-char14 = Character.create!(name: "Thia", user: user3, race: race_elf, subrace: subrace_wood_elf, character_class: class_fighter, subclass: subclass_battlemaster)
-char15 = Character.create!(name: "Jarek", user: user3, race: race_human, subrace: subrace_variant_human, character_class: class_barbarian, subclass: subclass_totem)
+char11 = Character.create!(name: "Finn", user: user3, race: race_human, subrace: subrace_standard_human, character_class: class_fighter, subclass: subclass_champion, level: 1, movement_speed: 30, max_hp: 10, visibility_range: 60)
+char12 = Character.create!(name: "Vex", user: user3, race: race_elf, subrace: subrace_high_elf, character_class: class_rogue, subclass: subclass_assassin, level: 1, movement_speed: 30, max_hp: 8, visibility_range: 60)
+char13 = Character.create!(name: "Orla", user: user3, race: race_dwarf, subrace: subrace_hill_dwarf, character_class: class_barbarian, subclass: subclass_berserker, level: 1, movement_speed: 25, max_hp: 12, visibility_range: 60)
+char14 = Character.create!(name: "Thia", user: user3, race: race_elf, subrace: subrace_wood_elf, character_class: class_fighter, subclass: subclass_battlemaster, level: 1, movement_speed: 30, max_hp: 10, visibility_range: 60)
+char15 = Character.create!(name: "Jarek", user: user3, race: race_human, subrace: subrace_variant_human, character_class: class_barbarian, subclass: subclass_totem, level: 1, movement_speed: 30, max_hp: 12, visibility_range: 60)
 
 # === ABILITY SCORES ===
 def set_scores(character, scores)
@@ -273,11 +273,6 @@ set_scores(char15, {
 [ char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15 ].each do |char|
   CharacterItem.create!(character: char, item: item_records.sample)
   CharacterItem.create!(character: char, item: item_records.sample)
-end
-
-# === ASSIGN ITEMS TO CHARACTERS ===
-[ char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15 ].each do |char|
-  char.update!(movement_speed: 30) # or 25 for dwarves
 end
 
 # === GENERATE BATTLE BOARD ===

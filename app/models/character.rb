@@ -17,6 +17,7 @@ class Character < ApplicationRecord
   validates :level, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 20 }
   validates :movement_speed, numericality: { only_integer: true, greater_than: 0 }
   validates :max_hp, numericality: { only_integer: true, greater_than: 0 }
+  validates :visibility_range, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
   # Helper methods to get specific ability scores
   def strength
