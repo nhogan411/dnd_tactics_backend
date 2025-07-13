@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  character: one
+  score_type: MyString
+  base_score: 1
+  modified_score: 1
+
+two:
+  character: two
+  score_type: MyString
+  base_score: 1
+  modified_score: 1

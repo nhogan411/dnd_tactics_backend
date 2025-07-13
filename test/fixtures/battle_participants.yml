@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  battle: one
+  character: one
+  user: one
+  team: 1
+  current_hp: 1
+  status: MyString
+
+two:
+  battle: two
+  character: two
+  user: two
+  team: 1
+  current_hp: 1
+  status: MyString

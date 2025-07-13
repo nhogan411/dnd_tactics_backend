@@ -1,0 +1,2 @@
+class BattleBoard < ApplicationRecord
+end

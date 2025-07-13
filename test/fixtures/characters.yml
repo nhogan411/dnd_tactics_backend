@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  user: one
+  race: one
+  subrace: one
+  character_class: one
+  subclass: one
+  max_hp: 1
+
+two:
+  name: MyString
+  user: two
+  race: two
+  subrace: two
+  character_class: two
+  subclass: two
+  max_hp: 1

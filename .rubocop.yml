@@ -1,0 +1,23 @@
+inherit_from: .rubocop_todo.yml
+
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+AllCops:
+  NewCops: enable
+  AutoCorrect: true
+
+# Add any custom rules here
+Layout/IndentationStyle:
+  Enabled: true
+  AutoCorrect: true
+  EnforcedStyle: spaces
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: indented_internal_methods
+  AutoCorrect: true
+
+Layout/IndentationWidth:
+  StyleGuide: '#spaces-indentation'
+  Enabled: true
+  Width: 2
