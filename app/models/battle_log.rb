@@ -1,5 +1,8 @@
 class BattleLog < ApplicationRecord
   belongs_to :battle
-  belongs_to :actor, class_name: "BattleParticipant"
-  belongs_to :target, class_name: "BattleParticipant", optional: true
+  belongs_to :actor, class_name: "Character"
+  belongs_to :target, class_name: "Character", optional: true
+
+  validates :action_type, presence: true
+  validates :message, presence: true
 end

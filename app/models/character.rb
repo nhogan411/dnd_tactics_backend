@@ -1,48 +1,27 @@
 class Character < ApplicationRecord
   belongs_to :user
   belongs_to :race
+  belongs_to :subrace
   belongs_to :character_class
+  belongs_to :subclass
 
-  serialize :ability_scores, Hash
+  has_many :ability_scores, dependent: :destroy
+  has_many :character_items, dependent: :destroy
+  has_many :items, through: :character_items
+  has_many :character_abilities, dependent: :destroy
+  has_many :abilities, through: :character_abilities
+  has_many :battle_participants, dependent: :destroy
+  has_many :character_class_levels, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 50 }
   validates :level, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 20 }
   validates :movement_speed, numericality: { only_integer: true, greater_than: 0 }
-  validate :validate_ability_scores
-  validate :validate_race_and_class_compatibility
+  validates :max_hp, numericality: { only_integer: true, greater_than: 0 }
 
-  before_validation :apply_race_ability_modifiers, on: :create
-
-  private
-
-    def validate_ability_scores
-      required_abilities = %w[strength dexterity constitution intelligence wisdom charisma]
-      missing = required_abilities - ability_scores.keys.map(&:downcase)
-      errors.add(:ability_scores, "must include #{missing.join(', ')}") if missing.any?
-
-      ability_scores.each do |k, v|
-        errors.add(:ability_scores, "#{k} must be between 1 and 20") unless (1..20).include?(v.to_i)
-      end
-    end
-
-    def validate_race_and_class_compatibility
-      # For example, check if character_class has min ability requirements
-      # Could add logic here to ensure min scores are met
-    end
-
-    def apply_race_ability_modifiers
-      return unless race&.ability_score_modifiers.present? && ability_scores.present?
-
-      race.ability_score_modifiers.each do |ability, mod|
-        current = ability_scores[ability.downcase] || 0
-        ability_scores[ability.downcase] = [ current + mod, 20 ].min
-      end
-    end
-
-    # Add helper methods to get specific ability scores
-    def strength
-      ability_scores.find_by(score_type: "STR")&.modified_score || 10
-    end
+  # Helper methods to get specific ability scores
+  def strength
+    ability_scores.find_by(score_type: "STR")&.modified_score || 10
+  end
 
     def dexterity
       ability_scores.find_by(score_type: "DEX")&.modified_score || 10
@@ -95,12 +74,13 @@ class Character < ApplicationRecord
       ability_scores.find_by(score_type: "CHA")&.modifier || ability_modifier(10)
     end
 
-    def max_hp
-      # Simple calculation for now - you can expand this later
-      base_hp = 8  # Base HP (could be based on character class later)
-      con_modifier = constitution_modifier
-      level = self.level || 1
+  # Calculate max HP based on character class and level
+  def calculate_max_hp
+    # Simple calculation - you can expand this later
+    base_hp = 8  # Base HP (could be based on character class later)
+    con_modifier = constitution_modifier
+    level_val = self.level || 1
 
-      base_hp + (con_modifier * level)
-    end
+    base_hp + (con_modifier * level_val)
+  end
 end

@@ -91,8 +91,8 @@ class BattleParticipant < ApplicationRecord
     # Create battle log
     BattleLog.create!(
       battle: battle,
-      actor: self,
-      target: target,
+      actor: attacker_char,
+      target: target_char,
       action_type: "attack",
       result_data: {
         damage: total_damage,

@@ -46,6 +46,6 @@ class RacesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def race_params
-      params.expect(race: [ :name ])
+      params.require(:race).permit(:name, :default_visibility_range)
     end
 end

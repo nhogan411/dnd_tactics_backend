@@ -1,10 +1,10 @@
 class CharactersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_character, only: [ :show, :update, :destroy ]
+  before_action :set_character, only: [:show, :update, :destroy]
 
   # GET /characters
   def index
-    @characters = current_user.characters.includes(:race, :character_class)
+    @characters = current_user.characters.includes(:race, :subrace, :character_class, :subclass)
     render json: @characters
   end
 
@@ -16,7 +16,6 @@ class CharactersController < ApplicationController
   # POST /characters
   def create
     @character = current_user.characters.new(character_params)
-    # Add default ability scores and modifiers logic here or in model callbacks
     if @character.save
       render json: @character, status: :created
     else
@@ -40,68 +39,12 @@ class CharactersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_character
-      @character = current_user.characters.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def character_params
-      params.require(:character).permit(:name, :race_id, :character_class_id, :level, :movement_speed, ability_scores: {})
-    end
-end
-
-
-
-
-
-
-
-
-
-class Api::CharactersController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_character, only: [ :show, :update, :destroy ]
-
-  def index
-    @characters = current_user.characters.includes(:race, :character_class)
-    render json: @characters
+  def set_character
+    @character = current_user.characters.find(params[:id])
   end
 
-  def show
-    render json: @character
+  def character_params
+    params.require(:character).permit(:name, :race_id, :subrace_id, :character_class_id, :subclass_id, :level, :movement_speed, :max_hp, :visibility_range)
   end
-
-  def create
-    @character = current_user.characters.new(character_params)
-    # Add default ability scores and modifiers logic here or in model callbacks
-    if @character.save
-      render json: @character, status: :created
-    else
-      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    if @character.update(character_params)
-      render json: @character
-    else
-      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @character.destroy
-    head :no_content
-  end
-
-  private
-
-    def set_character
-      @character = current_user.characters.find(params[:id])
-    end
-
-    def character_params
-      params.require(:character).permit(:name, :race_id, :character_class_id, :level, :movement_speed, ability_scores: {})
-    end
 end

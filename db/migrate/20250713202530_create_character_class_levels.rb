@@ -1,4 +1,4 @@
-class CreateCharacterClassLevels < ActiveRecord::Migration[7.0]
+class CreateCharacterClassLevels < ActiveRecord::Migration[8.0]
   def change
     create_table :character_class_levels do |t|
       t.references :character, null: false, foreign_key: true

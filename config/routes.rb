@@ -1,37 +1,52 @@
 Rails.application.routes.draw do
-  resources :items
-  resources :ability_scores
-  resources :subclasses
-  resources :character_classes
-  resources :subraces
-  resources :races
-  resources :characters
-  resources :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-  #
+  # API routes
   namespace :api do
-    namespace :api do
-      resources :characters, only: [ :index, :show, :create, :update, :destroy ]
-    end
-
-    resources :battles, only: [ :show ] do
-      member do
-        post :advance_turn
+    namespace :v1 do
+      resources :users, only: [:index, :show, :create, :update, :destroy]
+      resources :races, only: [:index, :show, :create, :update, :destroy] do
+        resources :subraces, only: [:index, :show, :create, :update, :destroy]
       end
+      resources :character_classes, only: [:index, :show, :create, :update, :destroy] do
+        resources :subclasses, only: [:index, :show, :create, :update, :destroy]
+      end
+      resources :characters, only: [:index, :show, :create, :update, :destroy] do
+        resources :ability_scores, only: [:index, :show, :create, :update, :destroy]
+        resources :character_items, only: [:index, :create, :destroy]
+        resources :character_abilities, only: [:index, :create, :destroy]
+      end
+      resources :items, only: [:index, :show, :create, :update, :destroy]
+      resources :abilities, only: [:index, :show, :create, :update, :destroy]
 
-      resources :participants, only: [] do
+      resources :battles, only: [:index, :show, :create, :update, :destroy] do
         member do
-          get :abilities
-          post :use_ability
+          post :start
+          post :advance_turn
+        end
+        resources :participants, only: [:index, :show, :create, :update, :destroy] do
+          member do
+            get :abilities
+            post :use_ability
+            post :attack
+            post :move
+          end
         end
       end
+
+      resources :battle_participant_selections, only: [:create, :destroy]
+      resources :battle_boards, only: [:index, :show, :create, :update, :destroy]
     end
   end
+
+  # Root level routes for backward compatibility (if needed)
+  resources :users, only: [:index, :show, :create, :update, :destroy]
+  resources :races, only: [:index, :show, :create, :update, :destroy]
+  resources :subraces, only: [:index, :show, :create, :update, :destroy]
+  resources :character_classes, only: [:index, :show, :create, :update, :destroy]
+  resources :subclasses, only: [:index, :show, :create, :update, :destroy]
+  resources :characters, only: [:index, :show, :create, :update, :destroy]
+  resources :ability_scores, only: [:index, :show, :create, :update, :destroy]
+  resources :items, only: [:index, :show, :create, :update, :destroy]
 end
