@@ -31,6 +31,7 @@ Rails.application.routes.draw do
             post :use_ability
             post :attack
             post :move
+            post :end_turn
           end
         end
       end

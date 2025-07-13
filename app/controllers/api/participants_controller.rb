@@ -36,6 +36,42 @@ class Api::ParticipantsController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  # POST /api/battles/:battle_id/participants/:id/move
+  def move
+    result = BattleServices::TurnSubmissionService.new(@battle, @participant, {
+      action_type: "move",
+      target_x: params[:target_x],
+      target_y: params[:target_y]
+    }).execute!
+
+    render json: result
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  # POST /api/battles/:battle_id/participants/:id/attack
+  def attack
+    result = BattleServices::TurnSubmissionService.new(@battle, @participant, {
+      action_type: "attack",
+      target_id: params[:target_id]
+    }).execute!
+
+    render json: result
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  # POST /api/battles/:battle_id/participants/:id/end_turn
+  def end_turn
+    result = BattleServices::TurnSubmissionService.new(@battle, @participant, {
+      action_type: "end_turn"
+    }).execute!
+
+    render json: result
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   private
 
     def set_battle
