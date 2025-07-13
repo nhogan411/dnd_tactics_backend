@@ -11,6 +11,7 @@ class Character < ApplicationRecord
   has_many :character_abilities, dependent: :destroy
   has_many :abilities, through: :character_abilities
   has_many :battle_participants, dependent: :destroy
+  has_many :battle_participant_selections, dependent: :destroy
   has_many :character_class_levels, dependent: :destroy
   has_many :battle_logs_as_actor, class_name: "BattleLog", foreign_key: "actor_id", dependent: :destroy
   has_many :battle_logs_as_target, class_name: "BattleLog", foreign_key: "target_id", dependent: :destroy
