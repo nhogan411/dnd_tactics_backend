@@ -49,8 +49,6 @@ module BattleServices
       save!
     end
 
-    private
-
     def handle_start_of_turn_effects
       # Handle regeneration
       if @status_effects["regeneration"]
@@ -68,5 +66,7 @@ module BattleServices
 
       # Add more start-of-turn effects as needed
     end
+
+    private
   end
 end
