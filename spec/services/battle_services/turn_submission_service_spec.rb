@@ -52,7 +52,7 @@ RSpec.describe BattleServices::TurnSubmissionService, type: :service do
       let(:service) { described_class.new(battle, participant, { action_type: "end_turn" }) }
 
       it 'advances turn and applies status effects' do
-        expect_any_instance_of(Battle::StatusManager).to receive(:tick!)
+        expect_any_instance_of(BattleServices::StatusManager).to receive(:tick!)
         expect_any_instance_of(BattleServices::TurnService).to receive(:next_turn!)
         service.execute!
       end

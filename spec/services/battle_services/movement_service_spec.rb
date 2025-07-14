@@ -21,7 +21,10 @@ RSpec.describe BattleServices::MovementService, type: :service do
       end
 
       it 'returns false for move exceeding movement speed' do
-        service = described_class.new(participant, 1, 1) # 8 squares away
+        # Create character with low movement speed
+        low_speed_char = create(:character, movement_speed: 5)
+        low_speed_participant = create(:battle_participant, battle: battle, character: low_speed_char, pos_x: 5, pos_y: 5)
+        service = described_class.new(low_speed_participant, 1, 1) # 8 squares away, movement_speed is 5
         expect(service.valid_move?).to be false
       end
 

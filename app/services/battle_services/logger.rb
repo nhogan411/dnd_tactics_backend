@@ -3,11 +3,11 @@ module BattleServices
     def self.log_attack(actor, target, result_data)
       BattleLog.create!(
         battle: actor.battle,
-        actor: actor,
-        target: target,
+        actor: actor.character,
+        target: target.character,
         action_type: "attack",
         result_data: result_data,
-        message: "#{actor.character.name} attacks #{target.character.name} for #{result_data[:damage]} damage!"
+        message: "#{actor.character.name} attacks #{target.character.name} for #{result_data[:damage][:total]} damage!"
       )
     end
 
