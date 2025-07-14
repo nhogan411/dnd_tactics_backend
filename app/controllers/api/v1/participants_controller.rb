@@ -40,8 +40,8 @@ class Api::V1::ParticipantsController < ApplicationController
   def move
     result = BattleServices::TurnSubmissionService.new(@battle, @participant, {
       action_type: "move",
-      target_x: params[:target_x],
-      target_y: params[:target_y]
+      target_x: params[:target_x].to_i,
+      target_y: params[:target_y].to_i
     }).execute!
 
     render json: result

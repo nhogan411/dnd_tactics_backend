@@ -21,8 +21,11 @@ module BattleServices
           # turn_count: next_participant.turn_order == 0 ? @battle.turn_count + 1 : @battle.turn_count
         )
 
-        # Apply start-of-turn effects
+        # Apply start-of-turn effects for the next participant
         apply_start_of_turn_effects(next_participant)
+
+        # Reduce cooldowns for all participants at the start of each turn
+        reduce_all_cooldowns
 
         BattleServices::Logger.log_turn_start(@battle, next_participant)
       else
@@ -96,9 +99,20 @@ module BattleServices
     end
 
     def apply_start_of_turn_effects(participant)
-      # Handle status effects, cooldowns, etc.
+      # Handle status effects like regeneration, poison, etc.
       status_manager = BattleServices::StatusManager.new(participant)
-      status_manager.start_of_turn!
+      status_manager.handle_start_of_turn_effects
+      status_manager.save!
+    end
+
+    def reduce_all_cooldowns
+      @battle.battle_participants.where(status: "active").each do |participant|
+        if participant.cooldowns.present?
+          updated_cooldowns = participant.cooldowns.transform_values { |turns| [turns - 1, 0].max }
+          updated_cooldowns.reject! { |_, turns| turns == 0 }
+          participant.update!(cooldowns: updated_cooldowns)
+        end
+      end
     end
 
     def end_battle_no_survivors
