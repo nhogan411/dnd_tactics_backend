@@ -12,14 +12,21 @@ module BattleServices
       current_index = @battle.current_turn_index
       active_participants = @battle.battle_participants.where(status: "active").order(:turn_order)
 
+      Rails.logger.debug "TurnService#next_turn! - current_index: #{current_index}"
+      Rails.logger.debug "TurnService#next_turn! - active_participants: #{active_participants.map { |p| "#{p.id}(#{p.turn_order})" }.join(', ')}"
+
       # Find next active participant
       next_participant = find_next_active_participant(current_index, active_participants)
+
+      Rails.logger.debug "TurnService#next_turn! - next_participant: #{next_participant&.id}(#{next_participant&.turn_order})"
 
       if next_participant
         @battle.update!(
           current_turn_index: next_participant.turn_order
           # turn_count: next_participant.turn_order == 0 ? @battle.turn_count + 1 : @battle.turn_count
         )
+
+        Rails.logger.debug "TurnService#next_turn! - updated battle.current_turn_index to: #{@battle.current_turn_index}"
 
         # Apply start-of-turn effects for the next participant
         apply_start_of_turn_effects(next_participant)
