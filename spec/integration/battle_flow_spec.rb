@@ -56,8 +56,11 @@ RSpec.describe 'Battle Integration', type: :request do
       # 4. End turn
       post "/api/v1/battles/#{battle.id}/participants/#{participant1.id}/end_turn"
 
+      puts "End turn response status: #{response.status}"
+      puts "End turn response body: #{response.body}"
       expect(response).to have_http_status(:success)
-      result = JSON.parse(response.body)
+      result = JSON.parse(response.body) rescue nil
+      puts "Parsed result: #{result}"
       expect(result['success']).to be true
 
       # Check that turn advanced
