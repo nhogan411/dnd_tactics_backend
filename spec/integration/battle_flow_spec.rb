@@ -18,6 +18,10 @@ RSpec.describe 'Battle Integration', type: :request do
 
   describe 'Complete battle turn sequence' do
     it 'allows participant to move, attack, and end turn' do
+      # Mock dice rolls to ensure consistent test results
+      allow(BattleServices::DiceRoller).to receive(:d20).and_return({ total: 15, rolls: [15], modifier: 0, formula: "1d20" })
+      allow(BattleServices::DiceRoller).to receive(:roll).and_return({ total: 4, rolls: [4], modifier: 0, formula: "1d4" })
+
       # 1. Move participant closer to target
       post "/api/v1/battles/#{battle.id}/participants/#{participant1.id}/move",
            params: { target_x: 5, target_y: 5 }
