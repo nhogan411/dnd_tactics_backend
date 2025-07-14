@@ -64,5 +64,65 @@ module BattleServices
         message: "#{winner.first_name} #{winner.last_name} wins the battle!"
       )
     end
+
+    def self.log_turn_start(battle, participant)
+      BattleLog.create!(
+        battle: battle,
+        actor: participant.character,
+        action_type: "turn_start",
+        result_data: { turn_order: participant.turn_order },
+        message: "#{participant.character.name}'s turn begins."
+      )
+    end
+
+    def self.log_initiative_reroll(battle)
+      BattleLog.create!(
+        battle: battle,
+        actor: nil,
+        action_type: "initiative_reroll",
+        result_data: {},
+        message: "Initiative order has been re-rolled."
+      )
+    end
+
+    def self.log_defeat(participant)
+      BattleLog.create!(
+        battle: participant.battle,
+        actor: participant.character,
+        action_type: "defeat",
+        result_data: {},
+        message: "#{participant.character.name} has been defeated!"
+      )
+    end
+
+    def self.log_status_effect(participant, effect_name, duration)
+      BattleLog.create!(
+        battle: participant.battle,
+        actor: participant.character,
+        action_type: "status_effect",
+        result_data: { effect: effect_name, duration: duration },
+        message: "#{participant.character.name} gains #{effect_name} for #{duration} turns."
+      )
+    end
+
+    def self.log_status_effect_removed(participant, effect_name)
+      BattleLog.create!(
+        battle: participant.battle,
+        actor: participant.character,
+        action_type: "status_effect_removed",
+        result_data: { effect: effect_name },
+        message: "#{participant.character.name}'s #{effect_name} effect ends."
+      )
+    end
+
+    def self.log_healing(participant, amount)
+      BattleLog.create!(
+        battle: participant.battle,
+        actor: participant.character,
+        action_type: "healing",
+        result_data: { amount: amount },
+        message: "#{participant.character.name} heals for #{amount} HP."
+      )
+    end
   end
 end
