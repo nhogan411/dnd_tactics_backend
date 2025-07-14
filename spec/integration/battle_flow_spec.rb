@@ -107,6 +107,10 @@ RSpec.describe 'Battle Integration', type: :request do
 
   describe 'Battle end conditions' do
     it 'ends battle when all participants of one team are defeated' do
+      # Mock dice rolls to ensure attack hits and deals damage
+      allow(BattleServices::DiceRoller).to receive(:d20).and_return({ total: 20, rolls: [20], modifier: 0, formula: "1d20" })
+      allow(BattleServices::DiceRoller).to receive(:roll).and_return({ total: 10, rolls: [10], modifier: 0, formula: "1d4" })
+
       # Reduce participant2's HP to 1
       participant2.update!(current_hp: 1)
 

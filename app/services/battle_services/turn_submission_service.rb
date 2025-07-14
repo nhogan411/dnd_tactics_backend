@@ -56,7 +56,12 @@ module BattleServices
       raise "Invalid target" unless valid_attack_target?(target)
 
       combat_service = BattleServices::CombatService.new(@participant, target)
-      combat_service.attack(target)
+      result = combat_service.attack(target)
+
+      # Check if battle should end after attack
+      check_battle_end
+
+      result
     end
 
     def execute_ability
