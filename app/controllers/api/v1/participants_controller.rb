@@ -59,22 +59,14 @@ class Api::V1::ParticipantsController < ApplicationController
     render json: result
   rescue StandardError => e
     render json: { error: e.message }, status: :unprocessable_entity
-  end
-
-  # POST /api/v1/battles/:battle_id/participants/:id/end_turn
+  end  # POST /api/v1/battles/:battle_id/participants/:id/end_turn
   def end_turn
-    Rails.logger.debug "Starting end_turn for participant #{@participant.id}"
-
     result = BattleServices::TurnSubmissionService.new(@battle, @participant, {
       action_type: "end_turn"
     }).execute!
 
-    Rails.logger.debug "End turn result: #{result.inspect}"
-
     render json: result
   rescue StandardError => e
-    Rails.logger.error "End turn error: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
