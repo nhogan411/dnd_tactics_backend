@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::ParticipantsController, type: :controller do
+RSpec.describe Api::V1::ParticipantsController, type: :controller do
   let(:battle_board) { create(:battle_board) }
   let(:battle) { create(:battle, battle_board: battle_board) }
   let(:participant) { create(:battle_participant, battle: battle) }
