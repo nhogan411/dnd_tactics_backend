@@ -17,8 +17,8 @@ module BattleServices
 
       if next_participant
         @battle.update!(
-          current_turn_index: next_participant.turn_order,
-          turn_count: next_participant.turn_order == 0 ? @battle.turn_count + 1 : @battle.turn_count
+          current_turn_index: next_participant.turn_order
+          # turn_count: next_participant.turn_order == 0 ? @battle.turn_count + 1 : @battle.turn_count
         )
 
         # Apply start-of-turn effects
@@ -61,7 +61,8 @@ module BattleServices
         participant.update!(turn_order: index)
       end
 
-      @battle.update!(current_turn_index: 0, turn_count: @battle.turn_count + 1)
+      @battle.update!(current_turn_index: 0)
+      # @battle.update!(current_turn_index: 0, turn_count: @battle.turn_count + 1)
 
       BattleServices::Logger.log_initiative_reroll(@battle)
     end
