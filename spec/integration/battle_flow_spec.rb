@@ -22,6 +22,8 @@ RSpec.describe 'Battle Integration', type: :request do
       post "/api/v1/battles/#{battle.id}/participants/#{participant1.id}/move",
            params: { target_x: 5, target_y: 5 }
 
+      puts "Response status: #{response.status}"
+      puts "Response body: #{response.body}" if response.status != 200
       expect(response).to have_http_status(:success)
       participant1.reload
       expect(participant1.pos_x).to eq(5)

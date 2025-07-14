@@ -17,6 +17,8 @@ module BattleServices
     def start_of_turn!
       # Apply start-of-turn effects like regeneration, poison, etc.
       handle_start_of_turn_effects
+      # Reduce cooldowns at the start of the turn
+      tick_cooldowns
       save!
     end
 

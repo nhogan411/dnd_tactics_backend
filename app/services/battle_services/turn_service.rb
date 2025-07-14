@@ -99,12 +99,6 @@ module BattleServices
       # Handle status effects, cooldowns, etc.
       status_manager = BattleServices::StatusManager.new(participant)
       status_manager.start_of_turn!
-
-      # Reduce ability cooldowns
-      if participant.cooldowns.present?
-        updated_cooldowns = participant.cooldowns.transform_values { |turns| [turns - 1, 0].max }
-        participant.update!(cooldowns: updated_cooldowns)
-      end
     end
 
     def end_battle_no_survivors
