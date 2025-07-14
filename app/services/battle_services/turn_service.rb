@@ -21,10 +21,12 @@ module BattleServices
       Rails.logger.debug "TurnService#next_turn! - next_participant: #{next_participant&.id}(#{next_participant&.turn_order})"
 
       if next_participant
+        Rails.logger.debug "TurnService#next_turn! - updating battle current_turn_index from #{@battle.current_turn_index} to #{next_participant.turn_order}"
         @battle.update!(
           current_turn_index: next_participant.turn_order
           # turn_count: next_participant.turn_order == 0 ? @battle.turn_count + 1 : @battle.turn_count
         )
+        Rails.logger.debug "TurnService#next_turn! - battle current_turn_index after update: #{@battle.reload.current_turn_index}"
 
         Rails.logger.debug "TurnService#next_turn! - updated battle.current_turn_index to: #{@battle.current_turn_index}"
 
