@@ -17,7 +17,7 @@ module BattleServices
         total: total,
         rolls: rolls,
         modifier: modifier,
-        formula: "#{count}d#{sides}#{modifier >= 0 ? '+' : ''}#{modifier != 0 ? modifier : ''}".gsub(/\+0$/, '')
+        formula: generate_formula(count, sides, modifier)
       }
     end
 
@@ -92,6 +92,15 @@ module BattleServices
       modifier = match[3] ? match[3].to_i : 0
 
       roll(sides, count, modifier)
+    end
+
+  private
+
+    def self.generate_formula(count, sides, modifier)
+      base = "#{count}d#{sides}"
+      return base if modifier == 0
+      return "#{base}#{modifier}" if modifier < 0
+      "#{base}+#{modifier}"
     end
   end
 end

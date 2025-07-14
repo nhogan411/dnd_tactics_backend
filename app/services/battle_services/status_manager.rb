@@ -1,4 +1,4 @@
-module Battle
+module BattleServices
   class StatusManager
     def initialize(participant)
       @participant = participant

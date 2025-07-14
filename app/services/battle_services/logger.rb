@@ -56,13 +56,23 @@ module BattleServices
     end
 
     def self.log_battle_end(battle, winner)
-      BattleLog.create!(
-        battle: battle,
-        actor: winner.characters.first, # Use first character as actor
-        action_type: "battle_end",
-        result_data: { winner_id: winner.id },
-        message: "#{winner.first_name} #{winner.last_name} wins the battle!"
-      )
+      if winner
+        BattleLog.create!(
+          battle: battle,
+          actor: winner.characters.first,
+          action_type: "battle_end",
+          result_data: { winner_id: winner.id },
+          message: "#{winner.first_name} #{winner.last_name} wins the battle!"
+        )
+      else
+        BattleLog.create!(
+          battle: battle,
+          actor: nil,
+          action_type: "battle_end",
+          result_data: { winner_id: nil },
+          message: "Battle ends with no survivors!"
+        )
+      end
     end
 
     def self.log_turn_start(battle, participant)
