@@ -44,10 +44,13 @@ RSpec.describe 'Battle Integration', type: :request do
       post "/api/v1/battles/#{battle.id}/participants/#{participant1.id}/attack",
            params: { target_id: participant2.id }
 
+      puts "Attack response status: #{response.status}"
+      puts "Attack response body: #{response.body}"
       expect(response).to have_http_status(:success)
 
       # Check that damage was dealt
       participant2.reload
+      puts "Participant2 HP after attack: #{participant2.current_hp}/#{char2.max_hp}"
       expect(participant2.current_hp).to be < char2.max_hp
 
       # 4. End turn
