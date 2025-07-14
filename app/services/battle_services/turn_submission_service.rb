@@ -28,12 +28,11 @@ module BattleServices
         execute_ability
       when "end_turn"
         execute_end_turn
+        # Only advance turn when explicitly ending turn
+        advance_turn
       else
         raise "Unknown action type: #{@action_type}"
       end
-
-      # Always advance turn after successful action
-      advance_turn unless @action_type == "end_turn"
 
       result
     end
