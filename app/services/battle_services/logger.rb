@@ -1,5 +1,11 @@
 module BattleServices
   class Logger
+    # Helper method to get a default target when none is needed
+    def self.get_default_target(battle)
+      # Use the first character from the battle as a default target
+      battle.battle_participants.first&.character
+    end
+
     def self.log_attack(actor, target, result_data)
       BattleLog.create!(
         battle: actor.battle,
@@ -45,6 +51,7 @@ module BattleServices
       BattleLog.create!(
         battle: participant.battle,
         actor: participant.character,
+        target: get_default_target(participant.battle),
         action_type: "movement",
         result_data: {
           from: { x: from_x, y: from_y },
@@ -60,6 +67,7 @@ module BattleServices
         BattleLog.create!(
           battle: battle,
           actor: winner.characters.first,
+          target: get_default_target(battle),
           action_type: "battle_end",
           result_data: { winner_id: winner.id },
           message: "#{winner.first_name} #{winner.last_name} wins the battle!"
@@ -67,7 +75,8 @@ module BattleServices
       else
         BattleLog.create!(
           battle: battle,
-          actor: nil,
+          actor: get_default_target(battle),
+          target: get_default_target(battle),
           action_type: "battle_end",
           result_data: { winner_id: nil },
           message: "Battle ends with no survivors!"
@@ -88,7 +97,8 @@ module BattleServices
     def self.log_initiative_reroll(battle)
       BattleLog.create!(
         battle: battle,
-        actor: nil,
+        actor: get_default_target(battle),
+        target: get_default_target(battle),
         action_type: "initiative_reroll",
         result_data: {},
         message: "Initiative order has been re-rolled."
@@ -99,6 +109,7 @@ module BattleServices
       BattleLog.create!(
         battle: participant.battle,
         actor: participant.character,
+        target: get_default_target(participant.battle),
         action_type: "defeat",
         result_data: {},
         message: "#{participant.character.name} has been defeated!"

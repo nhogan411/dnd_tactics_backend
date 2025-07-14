@@ -13,6 +13,13 @@ module BattleServices
       save!
     end
 
+    # Call this at the start of a participant's turn
+    def start_of_turn!
+      # Apply start-of-turn effects like regeneration, poison, etc.
+      handle_start_of_turn_effects
+      save!
+    end
+
     def tick_status_effects
       @status_effects.each do |effect, turns|
         @status_effects[effect] = turns - 1
@@ -38,6 +45,26 @@ module BattleServices
     def start_cooldown(ability_name, turns)
       @cooldowns[ability_name] = turns
       save!
+    end
+
+    private
+
+    def handle_start_of_turn_effects
+      # Handle regeneration
+      if @status_effects["regeneration"]
+        heal_amount = @status_effects["regeneration"]
+        new_hp = [@participant.current_hp + heal_amount, @participant.character.max_hp].min
+        @participant.update!(current_hp: new_hp)
+      end
+
+      # Handle poison/damage over time
+      if @status_effects["poison"]
+        damage = @status_effects["poison"]
+        new_hp = [@participant.current_hp - damage, 0].max
+        @participant.update!(current_hp: new_hp)
+      end
+
+      # Add more start-of-turn effects as needed
     end
   end
 end

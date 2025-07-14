@@ -78,7 +78,7 @@ module BattleServices
 
     def execute_end_turn
       # Handle end of turn effects
-      status_manager = Battle::StatusManager.new(@participant)
+      status_manager = BattleServices::StatusManager.new(@participant)
       status_manager.tick!
 
       advance_turn
