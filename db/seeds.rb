@@ -1410,7 +1410,7 @@ martial_ranged_weapons = [
     cost_gp: 1,
     weight_lbs: 3,
     damage_dice: "0",
-    damage_type: "none",
+    damage_type: nil,
     weapon_type: "martial",
     weapon_category: "ranged",
     range_normal: 5,
