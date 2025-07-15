@@ -2478,7 +2478,317 @@ Character.all.each do |char|
   end
 end
 
+# === FEATS ===
+# PHB Feats with comprehensive data mapping
+
+# Combat Feats
+feat_great_weapon_master = Feat.create!(
+  name: "Great Weapon Master",
+  description: "You've learned to put the weight of a weapon to your advantage, letting its momentum empower your strikes.",
+  prerequisites: {},
+  benefits: {
+    "special" => "Before you make a melee attack with a heavy weapon, you can choose to take a -5 penalty to the attack roll. If the attack hits, you add +10 to the attack's damage roll. When you score a critical hit with a melee weapon or reduce a creature to 0 hit points with one, you can make one melee weapon attack as a bonus action."
+  },
+  half_feat: false,
+  notes: "Popular feat for two-handed weapon users. High risk, high reward."
+)
+
+feat_sharpshooter = Feat.create!(
+  name: "Sharpshooter",
+  description: "You have mastered ranged weapons and can make shots that others find impossible.",
+  prerequisites: {},
+  benefits: {
+    "special" => "Attacking at long range doesn't impose disadvantage on your ranged weapon attack rolls. Your ranged weapon attacks ignore half cover and three-quarters cover. Before you make an attack with a ranged weapon, you can choose to take a -5 penalty to the attack roll. If the attack hits, you add +10 to the attack's damage roll."
+  },
+  half_feat: false,
+  notes: "Essential feat for archers and ranged weapon users."
+)
+
+feat_polearm_master = Feat.create!(
+  name: "Polearm Master",
+  description: "You can keep your enemies at bay with reach weapons.",
+  prerequisites: {},
+  benefits: {
+    "special" => "When you wield a glaive, halberd, pike, or quarterstaff, you can use a bonus action to make a melee attack with the opposite end of the weapon (1d4 bludgeoning). While wielding any of these weapons, other creatures provoke an opportunity attack when they enter your reach."
+  },
+  half_feat: false,
+  notes: "Great for reach weapon users and battlefield control."
+)
+
+feat_crossbow_expert = Feat.create!(
+  name: "Crossbow Expert",
+  description: "Thanks to extensive practice with the crossbow, you can fire faster and more accurately.",
+  prerequisites: {},
+  benefits: {
+    "special" => "You ignore the loading quality of crossbows. Being within 5 feet of a hostile creature doesn't impose disadvantage on your ranged attack rolls. When you use the Attack action and attack with a one-handed weapon, you can use a bonus action to attack with a hand crossbow you are holding."
+  },
+  half_feat: false,
+  notes: "Essential for crossbow users, especially with hand crossbows."
+)
+
+# Defensive Feats
+feat_shield_master = Feat.create!(
+  name: "Shield Master",
+  description: "You use shields not just for protection but also for offense.",
+  prerequisites: {},
+  benefits: {
+    "special" => "You can use a bonus action to try to shove a creature within 5 feet of you with your shield. If you take the Attack action on your turn, you can use a bonus action to attack with your shield. If you aren't incapacitated, you can add your shield's AC bonus to any Dexterity saving throw you make against a spell or other harmful effect."
+  },
+  half_feat: false,
+  notes: "Great for sword and board fighters."
+)
+
+feat_tough = Feat.create!(
+  name: "Tough",
+  description: "Your hit point maximum increases by an amount equal to twice your level when you gain this feat.",
+  prerequisites: {},
+  benefits: {
+    "special" => "Your hit point maximum increases by 2 for each level you have. If you gain a level after taking this feat, your hit point maximum increases by 2 additional hit points."
+  },
+  half_feat: false,
+  notes: "Simple but effective survivability feat."
+)
+
+feat_lucky = Feat.create!(
+  name: "Lucky",
+  description: "You have inexplicable luck that seems to kick in at just the right moment.",
+  prerequisites: {},
+  benefits: {
+    "special" => "You have 3 luck points. Whenever you make an attack roll, ability check, or saving throw, you can spend one luck point to roll an additional d20. You can choose to spend one of your luck points after you roll the die, but before the outcome is determined. You choose which of the d20s is used for the attack roll, ability check, or saving throw."
+  },
+  half_feat: false,
+  notes: "Powerful feat that can turn the tide of important rolls."
+)
+
+# Skill-based Feats
+feat_observant = Feat.create!(
+  name: "Observant",
+  description: "Quick to notice details of your environment, you gain the following benefits.",
+  prerequisites: {},
+  ability_score_increases: { "Intelligence" => 1, "Wisdom" => 1 },
+  benefits: {
+    "ability_scores" => { "Intelligence" => 1, "Wisdom" => 1 },
+    "special" => "If you can see a creature's mouth and know the language, you can interpret what it's saying by reading its lips. You have a +5 bonus to your passive Perception and passive Investigation scores."
+  },
+  half_feat: true,
+  notes: "Half-feat that improves observation abilities."
+)
+
+feat_skilled = Feat.create!(
+  name: "Skilled",
+  description: "You gain proficiency in any combination of three skills or tools of your choice.",
+  prerequisites: {},
+  benefits: {
+    "proficiencies" => ["three_skills_or_tools_of_choice"]
+  },
+  half_feat: false,
+  notes: "Versatile feat for characters who want more skills."
+)
+
+feat_linguist = Feat.create!(
+  name: "Linguist",
+  description: "You have studied languages and codes, gaining the following benefits.",
+  prerequisites: {},
+  ability_score_increases: { "Intelligence" => 1 },
+  benefits: {
+    "ability_scores" => { "Intelligence" => 1 },
+    "special" => "You learn three languages of your choice. You can ably create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC = your Intelligence score + proficiency bonus), or they use magic to decipher it."
+  },
+  half_feat: true,
+  notes: "Half-feat for intelligence-based characters who want language skills."
+)
+
+# Magic Feats
+feat_magic_initiate = Feat.create!(
+  name: "Magic Initiate",
+  description: "Choose a class: bard, cleric, druid, sorcerer, warlock, or wizard. You learn two cantrips of your choice from that class's spell list.",
+  prerequisites: {},
+  benefits: {
+    "special" => "You learn two cantrips of your choice from the spell list of one class. You also learn one 1st-level spell from the same class. You can cast this spell once without expending a spell slot, and you regain the ability to do so when you finish a long rest."
+  },
+  half_feat: false,
+  notes: "Gives non-spellcasters access to magic or expands a spellcaster's options."
+)
+
+feat_ritual_caster = Feat.create!(
+  name: "Ritual Caster",
+  description: "You have learned a number of spells that you can cast as rituals.",
+  prerequisites: { "ability_score" => { "Intelligence" => 13, "Wisdom" => 13 } },
+  benefits: {
+    "special" => "Choose one class: bard, cleric, druid, sorcerer, warlock, or wizard. You acquire a ritual book holding two 1st-level spells with the ritual tag from the chosen class. You can cast these spells as rituals only."
+  },
+  half_feat: false,
+  notes: "Provides utility spells through ritual casting."
+)
+
+feat_war_caster = Feat.create!(
+  name: "War Caster",
+  description: "You have practiced casting spells in the midst of combat, learning techniques that grant you the following benefits.",
+  prerequisites: { "spellcasting" => true },
+  benefits: {
+    "special" => "You have advantage on Constitution saving throws that you make to maintain your concentration on a spell when you take damage. You can perform the somatic components of spells even when you have weapons or a shield in one or both hands. When a hostile creature's movement provokes an opportunity attack from you, you can use your reaction to cast a spell at the creature, rather than making an opportunity attack."
+  },
+  half_feat: false,
+  notes: "Essential feat for spellcasters who fight in melee."
+)
+
+# Movement Feats
+feat_mobile = Feat.create!(
+  name: "Mobile",
+  description: "You are exceptionally speedy and agile. You gain the following benefits.",
+  prerequisites: {},
+  benefits: {
+    "special" => "Your speed increases by 10 feet. When you use the Dash action, difficult terrain doesn't cost you extra movement on that turn. When you make a melee attack against a creature, you don't provoke opportunity attacks from that creature for the rest of the turn, whether you hit or not."
+  },
+  half_feat: false,
+  notes: "Great for hit-and-run tactics and mobility."
+)
+
+feat_athlete = Feat.create!(
+  name: "Athlete",
+  description: "You have undergone extensive physical training to gain the following benefits.",
+  prerequisites: {},
+  ability_score_increases: { "Strength" => 1, "Dexterity" => 1 },
+  benefits: {
+    "ability_scores" => { "Strength" => 1, "Dexterity" => 1 },
+    "special" => "When you are prone, standing up uses only 5 feet of your movement. Climbing doesn't cost you extra movement. You can make a running long jump or a running high jump after moving only 5 feet on foot, rather than 10 feet."
+  },
+  half_feat: true,
+  notes: "Half-feat that improves athletic abilities."
+)
+
+# Social Feats
+feat_actor = Feat.create!(
+  name: "Actor",
+  description: "Skilled at mimicry and dramatics, you gain the following benefits.",
+  prerequisites: {},
+  ability_score_increases: { "Charisma" => 1 },
+  benefits: {
+    "ability_scores" => { "Charisma" => 1 },
+    "special" => "You have advantage on Charisma (Deception) and Charisma (Performance) checks when trying to pass yourself off as a different person. You can mimic the speech of another person or the sounds made by other creatures."
+  },
+  half_feat: true,
+  notes: "Half-feat for characters focused on deception and performance."
+)
+
+# Racial Feats (examples)
+feat_elven_accuracy = Feat.create!(
+  name: "Elven Accuracy",
+  description: "The accuracy of elves is legendary. You have uncanny aim with attacks that rely on precision rather than brute force.",
+  prerequisites: { "race" => "Elf" },
+  ability_score_increases: { "Dexterity" => 1, "Intelligence" => 1, "Wisdom" => 1, "Charisma" => 1 },
+  benefits: {
+    "ability_scores" => { "Dexterity" => 1, "Intelligence" => 1, "Wisdom" => 1, "Charisma" => 1 },
+    "special" => "Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once."
+  },
+  half_feat: true,
+  notes: "Elf-only half-feat that improves accuracy with finesse weapons and spells."
+)
+
+feat_dwarven_fortitude = Feat.create!(
+  name: "Dwarven Fortitude",
+  description: "You have the blood of dwarf heroes flowing through your veins.",
+  prerequisites: { "race" => "Dwarf" },
+  ability_score_increases: { "Constitution" => 1 },
+  benefits: {
+    "ability_scores" => { "Constitution" => 1 },
+    "special" => "Whenever you take the Dodge action in combat, you can spend one Hit Die to heal yourself. Roll the die, add your Constitution modifier, and regain a number of hit points equal to the total (minimum of 1)."
+  },
+  half_feat: true,
+  notes: "Dwarf-only half-feat that provides defensive benefits."
+)
+
+# Update characters with new stats and some sample feats
+Character.all.each do |char|
+  # Set current HP to max HP
+  char.update!(current_hp: char.max_hp)
+
+  # Initialize proficiencies based on class
+  case char.character_class.name
+  when "Barbarian"
+    char.update!(
+      skill_proficiencies: ["Athletics", "Intimidation"],
+      weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+      armor_proficiencies: ["Light armor", "Medium armor", "Shields"],
+      spellcasting_ability: nil
+    )
+  when "Fighter"
+    char.update!(
+      skill_proficiencies: ["Athletics", "Intimidation"],
+      weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+      armor_proficiencies: ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+      spellcasting_ability: nil
+    )
+  when "Rogue"
+    char.update!(
+      skill_proficiencies: ["Stealth", "Sleight of Hand", "Acrobatics", "Perception"],
+      skill_expertise: ["Stealth", "Sleight of Hand"],
+      weapon_proficiencies: ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"],
+      armor_proficiencies: ["Light armor"],
+      tool_proficiencies: ["Thieves' tools"],
+      spellcasting_ability: nil
+    )
+  when "Wizard"
+    char.update!(
+      skill_proficiencies: ["Arcana", "History"],
+      weapon_proficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+      armor_proficiencies: [],
+      spellcasting_ability: "Intelligence",
+      spell_slots: { "1" => 2, "2" => 0, "3" => 0, "4" => 0, "5" => 0, "6" => 0, "7" => 0, "8" => 0, "9" => 0 },
+      cantrips_known: ["Fire Bolt", "Mage Hand", "Prestidigitation"],
+      spells_known: ["Magic Missile", "Shield"]
+    )
+  when "Cleric"
+    char.update!(
+      skill_proficiencies: ["Insight", "Religion"],
+      weapon_proficiencies: ["Simple weapons"],
+      armor_proficiencies: ["Light armor", "Medium armor", "Shields"],
+      spellcasting_ability: "Wisdom",
+      spell_slots: { "1" => 2, "2" => 0, "3" => 0, "4" => 0, "5" => 0, "6" => 0, "7" => 0, "8" => 0, "9" => 0 },
+      cantrips_known: ["Sacred Flame", "Thaumaturgy", "Guidance"],
+      spells_known: ["Cure Wounds", "Bless", "Healing Word"]
+    )
+  end
+
+  # Add racial proficiencies
+  case char.race.name
+  when "Elf"
+    char.update!(
+      language_proficiencies: char.language_proficiencies + ["Common", "Elvish"]
+    )
+  when "Dwarf"
+    char.update!(
+      language_proficiencies: char.language_proficiencies + ["Common", "Dwarvish"],
+      weapon_proficiencies: char.weapon_proficiencies + ["Battleaxe", "Handaxe", "Light hammer", "Warhammer"],
+      tool_proficiencies: char.tool_proficiencies + ["Smith's tools"]
+    )
+  when "Halfling"
+    char.update!(
+      language_proficiencies: char.language_proficiencies + ["Common", "Halfling"]
+    )
+  when "Human"
+    char.update!(
+      language_proficiencies: char.language_proficiencies + ["Common"],
+      skill_proficiencies: char.skill_proficiencies + ["Persuasion"] # Extra skill for humans
+    )
+  end
+
+  # Give some characters sample feats
+  if char.character_class.name == "Fighter" && char.level >= 4
+    char.gain_feat(feat_great_weapon_master)
+  elsif char.character_class.name == "Rogue" && char.level >= 4
+    char.gain_feat(feat_lucky)
+  elsif char.character_class.name == "Wizard" && char.level >= 4
+    char.gain_feat(feat_war_caster)
+  end
+
+  # Give some characters starting currency
+  char.gain_currency(gp: rand(50..200))
+end
+
 puts "Database seeded successfully!"
 puts "Created #{Item.count} items (weapons, armor, and gear)"
 puts "Created #{Character.count} characters across #{User.count} users"
+puts "Created #{Feat.count} feats available for selection"
 puts "Created #{Battle.count} battle(s) ready for testing"
+puts "All characters now have comprehensive PHB stats, proficiencies, and abilities!"
