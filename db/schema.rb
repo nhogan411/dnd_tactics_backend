@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_011721) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -180,6 +180,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_011721) do
     t.jsonb "bonuses"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.text "notes"
+    t.string "rarity", default: "common"
+    t.integer "cost_gp"
+    t.decimal "weight_lbs", precision: 8, scale: 2
+    t.boolean "requires_attunement", default: false
+    t.string "damage_dice"
+    t.string "damage_type"
+    t.string "weapon_type"
+    t.string "weapon_category"
+    t.integer "range_normal"
+    t.integer "range_long"
+    t.jsonb "weapon_properties", default: {}
+    t.integer "armor_class"
+    t.string "armor_type"
+    t.integer "max_dex_bonus"
+    t.integer "strength_requirement"
+    t.boolean "stealth_disadvantage", default: false
+    t.boolean "is_magical", default: false
+    t.integer "magic_bonus"
+    t.integer "spell_attack_bonus"
+    t.integer "spell_save_dc_bonus"
+    t.integer "max_charges"
+    t.integer "charges_per_day"
+    t.boolean "consumable", default: false
+    t.index ["armor_type"], name: "index_items_on_armor_type"
+    t.index ["is_magical"], name: "index_items_on_is_magical"
+    t.index ["item_type"], name: "index_items_on_item_type"
+    t.index ["rarity"], name: "index_items_on_rarity"
+    t.index ["weapon_type"], name: "index_items_on_weapon_type"
   end
 
   create_table "races", force: :cascade do |t|
