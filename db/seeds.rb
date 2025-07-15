@@ -1665,6 +1665,422 @@ all_items = simple_melee_weapons + simple_ranged_weapons + martial_melee_weapons
 
 item_records = all_items.map { |item_data| Item.create!(item_data) }
 
+
+# === SPELLS ===
+# Core D&D 5e spells for testing the spell system
+
+# Clear existing spells
+CharacterSpell.delete_all
+Spell.delete_all
+
+# === CANTRIPS (Level 0) ===
+cantrips_data = [
+  {
+    name: "Acid Splash",
+    description: "You hurl a bubble of acid. Choose one creature within range, or choose two creatures within range that are within 5 feet of each other. A target must succeed on a Dexterity saving throw or take 1d6 acid damage.",
+    level: 0,
+    school: "conjuration",
+    casting_time: "1 action",
+    range: "60 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    damage: { "dice" => "1d6", "type" => "acid" },
+    saving_throw: "Dexterity",
+    at_higher_levels: "This spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6)."
+  },
+  {
+    name: "Mage Hand",
+    description: "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration or until you dismiss it as an action. You can use your action to control the hand.",
+    level: 0,
+    school: "conjuration",
+    casting_time: "1 action",
+    range: "30 feet",
+    duration: "1 minute",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["bard", "sorcerer", "warlock", "wizard"],
+    effects: { "utility" => true }
+  },
+  {
+    name: "Fire Bolt",
+    description: "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 fire damage.",
+    level: 0,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "120 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    damage: { "dice" => "1d10", "type" => "fire" },
+    attack_type: "ranged",
+    at_higher_levels: "This spell's damage increases by 1d10 when you reach 5th level (2d10), 11th level (3d10), and 17th level (4d10)."
+  },
+  {
+    name: "Sacred Flame",
+    description: "Flame-like radiance descends on a creature that you can see within range. The target must succeed on a Dexterity saving throw or take 1d8 radiant damage.",
+    level: 0,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "60 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["cleric"],
+    damage: { "dice" => "1d8", "type" => "radiant" },
+    saving_throw: "Dexterity",
+    at_higher_levels: "This spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8)."
+  },
+  {
+    name: "Guidance",
+    description: "You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one ability check of its choice.",
+    level: 0,
+    school: "divination",
+    casting_time: "1 action",
+    range: "Touch",
+    duration: "Concentration, up to 1 minute",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: true,
+    ritual: false,
+    class_lists: ["cleric", "druid"],
+    effects: { "bonus" => { "type" => "ability_check", "die" => "1d4" } }
+  }
+]
+
+# === 1ST LEVEL SPELLS ===
+first_level_spells = [
+  {
+    name: "Magic Missile",
+    description: "You create three glowing darts of magical force. Each dart hits a creature of your choice that you can see within range. A dart deals 1d4 + 1 force damage to its target.",
+    level: 1,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "120 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    damage: { "dice" => "1d4", "bonus" => 1, "type" => "force", "count" => 3 },
+    at_higher_levels: "When you cast this spell using a spell slot of 2nd level or higher, the spell creates one more dart for each slot level above 1st."
+  },
+  {
+    name: "Cure Wounds",
+    description: "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier.",
+    level: 1,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "Touch",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["bard", "cleric", "druid", "paladin", "ranger"],
+    effects: { "healing" => { "dice" => "1d8", "modifier" => "spellcasting" } },
+    at_higher_levels: "When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d8 for each slot level above 1st."
+  },
+  {
+    name: "Shield",
+    description: "An invisible barrier of magical force appears and protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack.",
+    level: 1,
+    school: "abjuration",
+    casting_time: "1 reaction",
+    range: "Self",
+    duration: "1 round",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    effects: { "ac_bonus" => 5 }
+  },
+  {
+    name: "Burning Hands",
+    description: "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.",
+    level: 1,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "Self (15-foot cone)",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    damage: { "dice" => "3d6", "type" => "fire" },
+    saving_throw: "Dexterity",
+    at_higher_levels: "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st."
+  },
+  {
+    name: "Healing Word",
+    description: "A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier.",
+    level: 1,
+    school: "evocation",
+    casting_time: "1 bonus action",
+    range: "60 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["bard", "cleric", "druid"],
+    effects: { "healing" => { "dice" => "1d4", "modifier" => "spellcasting" } },
+    at_higher_levels: "When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d4 for each slot level above 1st."
+  }
+]
+
+# === 2ND LEVEL SPELLS ===
+second_level_spells = [
+  {
+    name: "Fireball",
+    description: "A bright streak flashes from your pointing finger to a point you choose within range and then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere centered on that point must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one.",
+    level: 3,
+    school: "evocation",
+    casting_time: "1 action",
+    range: "150 feet",
+    duration: "Instantaneous",
+    components: { "verbal" => true, "somatic" => true, "material" => true },
+    material_components: "A tiny ball of bat guano and sulfur",
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "wizard"],
+    damage: { "dice" => "8d6", "type" => "fire" },
+    saving_throw: "Dexterity",
+    at_higher_levels: "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd."
+  },
+  {
+    name: "Misty Step",
+    description: "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space that you can see.",
+    level: 2,
+    school: "conjuration",
+    casting_time: "1 bonus action",
+    range: "Self",
+    duration: "Instantaneous",
+    components: { "verbal" => true },
+    concentration: false,
+    ritual: false,
+    class_lists: ["sorcerer", "warlock", "wizard"],
+    effects: { "teleport" => { "distance" => 30 } }
+  },
+  {
+    name: "Hold Person",
+    description: "Choose a humanoid that you can see within range. The target must succeed on a Wisdom saving throw or be paralyzed for the duration. At the end of each of its turns, the target can make another Wisdom saving throw. On a success, the spell ends on the target.",
+    level: 2,
+    school: "enchantment",
+    casting_time: "1 action",
+    range: "60 feet",
+    duration: "Concentration, up to 1 minute",
+    components: { "verbal" => true, "somatic" => true, "material" => true },
+    material_components: "A small, straight piece of iron",
+    concentration: true,
+    ritual: false,
+    class_lists: ["bard", "cleric", "druid", "sorcerer", "warlock", "wizard"],
+    effects: { "condition" => "paralyzed" },
+    saving_throw: "Wisdom",
+    at_higher_levels: "When you cast this spell using a spell slot of 3rd level or higher, you can target one additional humanoid for each slot level above 2nd."
+  }
+]
+
+# Create all spells
+all_spells = cantrips_data + first_level_spells + second_level_spells
+
+all_spells.each do |spell_data|
+  Spell.create!(spell_data)
+end
+
+# === BACKGROUNDS ===
+# Core D&D 5e backgrounds
+
+backgrounds_data = [
+  {
+    name: "Acolyte",
+    description: "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
+    skill_proficiencies: ["Insight", "Religion"],
+    language_proficiencies: ["choice_1", "choice_2"],
+    tool_proficiencies: [],
+    equipment: ["Holy symbol", "Prayer book", "Incense"],
+    feature_name: "Shelter of the Faithful",
+    feature_description: "You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith.",
+    suggested_characteristics: {
+      "personality_traits" => [
+        "I idolize a particular hero of my faith, and constantly refer to that person's deeds and example.",
+        "I can find common ground between the fiercest enemies, empathizing with them and always working toward peace.",
+        "I see omens in every event and action. The gods try to speak to us, we just need to listen.",
+        "Nothing can shake my optimistic attitude."
+      ],
+      "ideals" => [
+        "Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld.",
+        "Charity. I always try to help those in need, no matter what the personal cost.",
+        "Change. We must help bring about the changes the gods are constantly working in the world.",
+        "Power. I hope to one day rise to the top of my faith's religious hierarchy."
+      ],
+      "bonds" => [
+        "I would die to recover an ancient relic of my faith that was lost long ago.",
+        "I will someday get revenge on the corrupt temple hierarchy who branded me a heretic.",
+        "I owe my life to the priest who took me in when my parents died.",
+        "Everything I do is for the common people."
+      ],
+      "flaws" => [
+        "I judge others harshly, and myself even more severely.",
+        "I put too much trust in those who wield power within my temple's hierarchy.",
+        "My piety sometimes leads me to blindly trust those that profess faith in my god.",
+        "I am inflexible in my thinking."
+      ]
+    }
+  },
+  {
+    name: "Criminal",
+    description: "You are an experienced criminal with a history of breaking the law.",
+    skill_proficiencies: ["Deception", "Stealth"],
+    language_proficiencies: [],
+    tool_proficiencies: ["Thieves' tools", "Gaming set"],
+    equipment: ["Crowbar", "Dark common clothes", "Belt pouch"],
+    feature_name: "Criminal Contact",
+    feature_description: "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals.",
+    suggested_characteristics: {
+      "personality_traits" => [
+        "I always have a plan for what to do when things go wrong.",
+        "I am always calm, no matter what the situation. I never raise my voice or let my emotions control me.",
+        "The first thing I do in a new place is note the locations of everything valuable—or where such things could be hidden.",
+        "I would rather make a new friend than a new enemy."
+      ],
+      "ideals" => [
+        "Honor. I don't steal from others in the trade.",
+        "Freedom. Chains are meant to be broken, as are those who would forge them.",
+        "Charity. I steal from the wealthy so that I can help people in need.",
+        "Greed. I will do whatever it takes to become wealthy."
+      ],
+      "bonds" => [
+        "I'm trying to pay off an old debt I owe to a generous benefactor.",
+        "My ill-gotten gains go to support my family.",
+        "Something important was taken from me, and I aim to steal it back.",
+        "I will become the greatest thief that ever lived."
+      ],
+      "flaws" => [
+        "When I see something valuable, I can't think about anything but how to steal it.",
+        "When faced with a choice between money and my friends, I usually choose the money.",
+        "If there's a plan, I'll forget it. If I don't forget it, I'll ignore it.",
+        "I have a 'tell' that reveals when I'm lying."
+      ]
+    }
+  },
+  {
+    name: "Folk Hero",
+    description: "You come from a humble social rank, but you are destined for so much more.",
+    skill_proficiencies: ["Animal Handling", "Survival"],
+    language_proficiencies: [],
+    tool_proficiencies: ["Artisan's tools", "Vehicles (land)"],
+    equipment: ["Artisan's tools", "Shovel", "Common clothes"],
+    feature_name: "Rustic Hospitality",
+    feature_description: "Since you come from the ranks of the common folk, you fit in among them with ease.",
+    suggested_characteristics: {
+      "personality_traits" => [
+        "I judge people by their actions, not their words.",
+        "If someone is in trouble, I'm always ready to lend help.",
+        "When I set my mind to something, I follow through no matter what gets in my way.",
+        "I have a strong sense of fair play and always try to find the most equitable solution to arguments."
+      ],
+      "ideals" => [
+        "Respect. People deserve to be treated with dignity and respect.",
+        "Fairness. No one should get preferential treatment before the law, and no one is above the law.",
+        "Freedom. Tyrants must not be allowed to oppress the people.",
+        "Might. If I become strong, I can take what I want—what I deserve."
+      ],
+      "bonds" => [
+        "I have a family, but I have no idea where they are. I hope to see them again one day.",
+        "I worked the land, I love the land, and I will protect the land.",
+        "A proud noble once gave me a horrible beating, and I will take my revenge on any bully I encounter.",
+        "My tools are symbols of my past life, and I carry them so that I will never forget my roots."
+      ],
+      "flaws" => [
+        "The tyrant who rules my land will stop at nothing to see me killed.",
+        "I'm convinced of the significance of my destiny, and blind to my shortcomings and the risk of failure.",
+        "The people who knew me when I was young know my shameful secret, so I can never go home again.",
+        "I have a weakness for the vices of the city, especially hard drink."
+      ]
+    }
+  },
+  {
+    name: "Noble",
+    description: "You understand wealth, power, and privilege. You carry a noble title.",
+    skill_proficiencies: ["History", "Persuasion"],
+    language_proficiencies: ["choice_1"],
+    tool_proficiencies: ["Gaming set"],
+    equipment: ["Signet ring", "Fine clothes", "Purse"],
+    feature_name: "Position of Privilege",
+    feature_description: "Thanks to your noble birth, people are inclined to think the best of you.",
+    suggested_characteristics: {
+      "personality_traits" => [
+        "My eloquent flattery makes everyone I talk to feel like the most wonderful and important person in the world.",
+        "The common folk love me for my kindness and generosity.",
+        "No one could doubt by looking at my regal bearing that I am a cut above the unwashed masses.",
+        "I take great pains to always look my best and follow the latest fashions."
+      ],
+      "ideals" => [
+        "Respect. Respect is due to me because of my position, but all people regardless of station deserve to be treated with dignity.",
+        "Responsibility. It is my duty to respect the authority of those above me, just as those below me must respect mine.",
+        "Independence. I must prove that I can handle myself without the coddling of my family.",
+        "Power. If I can attain more power, no one will tell me what to do."
+      ],
+      "bonds" => [
+        "I will face any challenge to win the approval of my family.",
+        "My house's alliance with another noble family must be sustained at all costs.",
+        "Nothing is more important than the other members of my family.",
+        "I am in love with the heir of a family that my family despises."
+      ],
+      "flaws" => [
+        "I secretly believe that everyone is beneath me.",
+        "I hide a truly scandalous secret that could ruin my family forever.",
+        "I too often hear veiled insults and threats in every word addressed to me, and I'm quick to anger.",
+        "I have an insatiable desire for carnal pleasures."
+      ]
+    }
+  },
+  {
+    name: "Soldier",
+    description: "War has been your life for as long as you care to remember.",
+    skill_proficiencies: ["Athletics", "Intimidation"],
+    language_proficiencies: [],
+    tool_proficiencies: ["Gaming set", "Vehicles (land)"],
+    equipment: ["Insignia of rank", "Deck of cards", "Common clothes"],
+    feature_name: "Military Rank",
+    feature_description: "You have a military rank from your career as a soldier.",
+    suggested_characteristics: {
+      "personality_traits" => [
+        "I'm always polite and respectful.",
+        "I'm haunted by memories of war. I can't get the images of violence out of my mind.",
+        "I've lost too many friends, and I'm slow to make new ones.",
+        "I'm full of inspiring and cautionary tales from my military experience relevant to almost every combat situation."
+      ],
+      "ideals" => [
+        "Greater Good. Our lot is to lay down our lives in defense of others.",
+        "Responsibility. I do what I must and obey just authority.",
+        "Independence. When people follow orders blindly, they embrace a kind of tyranny.",
+        "Might. In life as in war, the stronger force wins."
+      ],
+      "bonds" => [
+        "I would still lay down my life for the people I served with.",
+        "Someone saved my life on the battlefield. To this day, I will never leave a friend behind.",
+        "My honor is my life.",
+        "I'll never forget the crushing defeat my company suffered or the enemies who dealt it."
+      ],
+      "flaws" => [
+        "The monstrous enemy we faced in battle still leaves me quivering with fear.",
+        "I have little respect for anyone who is not a proven warrior.",
+        "I made a terrible mistake in battle that cost many lives—and I would do anything to keep that mistake secret.",
+        "My hatred of my enemies is blind and unreasoning."
+      ]
+    }
+  }
+]
+
+backgrounds_data.each do |bg_data|
+  Background.create!(bg_data)
+end
+
 # === USERS & CHARACTERS ===
 
 # User 1
