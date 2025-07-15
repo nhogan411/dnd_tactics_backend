@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_011721) do
   create_table "battle_logs", force: :cascade do |t|
     t.bigint "battle_id", null: false
     t.bigint "actor_id"
-    t.bigint "target_id", null: false
+    t.bigint "target_id"
     t.string "action_type"
     t.jsonb "result_data"
     t.string "message"
