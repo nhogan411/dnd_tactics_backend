@@ -52,6 +52,8 @@ This document outlines the architecture, features, goals, and current progress o
   - Ability usage
 - Fog of war system limits visibility based on character/race.
 - Battle logs capture all actions.
+- WebSocket-ready backend architecture in place for live battle updates.
+- Battle status tracking and victory condition logic underway.
 
 ### 🧩 Board & Environment
 - `BattleBoard` model defines terrain:
@@ -62,11 +64,12 @@ This document outlines the architecture, features, goals, and current progress o
 - Battles can flag for AI opponent.
 - AI behavior is structured via strategy types.
 - Tactical diversity and difficulty planned.
+- Strategy types are decoupled from specific class names.
 
 ### 📊 Turn Management
 - `TurnManager` handles initiative and next turn order.
 - `TurnSubmissionService` accepts moves/attacks/abilities from users.
-- WebSocket broadcasting planned for live updates.
+- Live multiplayer battles planned using ActionCable/WebSockets.
 
 ### 🔐 Authorization & Validation
 - Pundit used for all user-level access control.
@@ -89,12 +92,16 @@ This document outlines the architecture, features, goals, and current progress o
 ### 🏗️ Mid-Implementation
 - More abilities from all three classes
 - Dynamic starting square logic for each battle board
+- Victory condition rules (battle end triggers)
 
 ### 🔜 Queued
 - Trait-based AI behavior strategies
 - Strategy Analyzer (user + AI behavior profiling)
 - Enum/tag-based tactics mapping for AI logic
 - Visibility-aware targeting and movement
+- XP system for character and class leveling
+- Level-up option handling and character advancement workflows
+- Frontend UI for leveling and multiclassing decisions
 
 ---
 
@@ -127,6 +134,8 @@ This document outlines the architecture, features, goals, and current progress o
 - Frontend lobby system
 - Skill checks (DEX, STR, INT, etc.)
 - Custom item builder (non-magical only for now)
+- Live game state broadcasting and client sync via WebSockets
+- Dynamic AI Analyzer-generated tactic labels
 
 ---
 
