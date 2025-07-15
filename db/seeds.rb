@@ -356,17 +356,372 @@ subrace_tiefling = Subrace.create!(
 )
 
 # === CLASSES & SUBCLASSES ===
-class_barbarian = CharacterClass.create!(name: "Barbarian", ability_requirements: {}, bonuses: {})
-subclass_berserker = Subclass.create!(name: "Path of the Berserker", character_class: class_barbarian, bonuses: { "rage_bonus" => true })
-subclass_totem = Subclass.create!(name: "Path of the Totem Warrior", character_class: class_barbarian, bonuses: { "animal_spirit" => true })
+# PHB Classes with comprehensive data mapping
 
-class_fighter = CharacterClass.create!(name: "Fighter", ability_requirements: {}, bonuses: {})
-subclass_champion = Subclass.create!(name: "Champion", character_class: class_fighter, bonuses: { "extra_attack" => true })
-subclass_battlemaster = Subclass.create!(name: "Battle Master", character_class: class_fighter, bonuses: { "combat_superiority" => true })
+# === BARBARIAN ===
+class_barbarian = CharacterClass.create!(
+  name: "Barbarian",
+  description: "A fierce warrior of primitive background who can enter a battle rage.",
+  hit_die: 12,
+  primary_ability: ["Strength"],
+  saving_throw_proficiencies: ["Strength", "Constitution"],
+  skill_proficiencies: {
+    "choose" => 2,
+    "available" => ["Animal Handling", "Athletics", "Intimidation", "Nature", "Perception", "Survival"]
+  },
+  weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+  armor_proficiencies: ["Light armor", "Medium armor", "Shields"],
+  tool_proficiencies: [],
+  starting_equipment: {
+    "weapon" => "Greataxe or any martial melee weapon",
+    "ranged" => "Two handaxes or any simple weapon",
+    "armor" => "Leather armor",
+    "pack" => "Explorer's pack",
+    "other" => "Four javelins"
+  },
+  spellcasting: {},
+  class_features: {
+    "1" => { "rage" => true, "unarmored_defense" => true },
+    "2" => { "reckless_attack" => true, "danger_sense" => true },
+    "3" => { "primal_path" => true },
+    "4" => { "ability_score_improvement" => true },
+    "5" => { "extra_attack" => true, "fast_movement" => true },
+    "6" => { "path_feature" => true },
+    "7" => { "feral_instinct" => true },
+    "8" => { "ability_score_improvement" => true },
+    "9" => { "brutal_critical_1" => true },
+    "10" => { "path_feature" => true },
+    "11" => { "relentless_rage" => true },
+    "12" => { "ability_score_improvement" => true },
+    "13" => { "brutal_critical_2" => true },
+    "14" => { "path_feature" => true },
+    "15" => { "persistent_rage" => true },
+    "16" => { "ability_score_improvement" => true },
+    "17" => { "brutal_critical_3" => true },
+    "18" => { "indomitable_might" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "primal_champion" => true }
+  },
+  multiclass_requirements: { "Strength" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Barbarians are defined by their rage, a ferocity that gives them uncanny powers and resistance to harm."
+)
 
-class_rogue = CharacterClass.create!(name: "Rogue", ability_requirements: {}, bonuses: {})
-subclass_thief = Subclass.create!(name: "Thief", character_class: class_rogue, bonuses: { "fast_hands" => true })
-subclass_assassin = Subclass.create!(name: "Assassin", character_class: class_rogue, bonuses: { "sneak_attack" => true })
+subclass_berserker = Subclass.create!(
+  name: "Path of the Berserker",
+  character_class: class_barbarian,
+  description: "For some barbarians, rage is a means to an end—that end being violence. The Path of the Berserker is a path of untrammeled fury, slick with blood.",
+  subclass_features: {
+    "3" => { "frenzy" => true },
+    "6" => { "mindless_rage" => true },
+    "10" => { "intimidating_presence" => true },
+    "14" => { "retaliation" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "rage_bonus" => true },
+  notes: "Berserkers can enter a frenzy during rage, making additional attacks but gaining exhaustion."
+)
+
+subclass_totem = Subclass.create!(
+  name: "Path of the Totem Warrior",
+  character_class: class_barbarian,
+  description: "The Path of the Totem Warrior is a spiritual journey, as the barbarian accepts a spirit animal as guide, protector, and inspiration.",
+  subclass_features: {
+    "3" => { "spirit_seeker" => true, "totem_spirit" => true },
+    "6" => { "aspect_of_the_beast" => true },
+    "10" => { "spirit_walker" => true },
+    "14" => { "totemic_attunement" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "animal_spirit" => true },
+  notes: "Totem Warriors gain abilities based on spirit animals: Bear (resistance), Eagle (sight), or Wolf (pack tactics)."
+)
+
+# === FIGHTER ===
+class_fighter = CharacterClass.create!(
+  name: "Fighter",
+  description: "A master of martial combat, skilled with a variety of weapons and armor.",
+  hit_die: 10,
+  primary_ability: ["Strength", "Dexterity"],
+  saving_throw_proficiencies: ["Strength", "Constitution"],
+  skill_proficiencies: {
+    "choose" => 2,
+    "available" => ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"]
+  },
+  weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+  armor_proficiencies: ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+  tool_proficiencies: [],
+  starting_equipment: {
+    "armor" => "Chain mail or leather armor",
+    "shield" => "Shield or second weapon",
+    "weapon" => "Martial weapon and shield or two martial weapons",
+    "ranged" => "Light crossbow and 20 bolts or two handaxes",
+    "pack" => "Dungeoneer's pack or explorer's pack"
+  },
+  spellcasting: {},
+  class_features: {
+    "1" => { "fighting_style" => true, "second_wind" => true },
+    "2" => { "action_surge" => true },
+    "3" => { "martial_archetype" => true },
+    "4" => { "ability_score_improvement" => true },
+    "5" => { "extra_attack" => true },
+    "6" => { "ability_score_improvement" => true },
+    "7" => { "martial_archetype_feature" => true },
+    "8" => { "ability_score_improvement" => true },
+    "9" => { "indomitable" => true },
+    "10" => { "martial_archetype_feature" => true },
+    "11" => { "extra_attack_2" => true },
+    "12" => { "ability_score_improvement" => true },
+    "13" => { "indomitable_2" => true },
+    "14" => { "ability_score_improvement" => true },
+    "15" => { "martial_archetype_feature" => true },
+    "16" => { "ability_score_improvement" => true },
+    "17" => { "action_surge_2" => true, "indomitable_3" => true },
+    "18" => { "martial_archetype_feature" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "extra_attack_3" => true }
+  },
+  multiclass_requirements: { "Strength" => 13, "Dexterity" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Fighters are the most versatile combatants, able to specialize in many different fighting styles and tactics."
+)
+
+subclass_champion = Subclass.create!(
+  name: "Champion",
+  character_class: class_fighter,
+  description: "The archetypal Champion focuses on the development of raw physical power honed to deadly perfection.",
+  subclass_features: {
+    "3" => { "improved_critical" => true },
+    "7" => { "remarkable_athlete" => true },
+    "10" => { "additional_fighting_style" => true },
+    "15" => { "superior_critical" => true },
+    "18" => { "survivor" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "extra_attack" => true },
+  notes: "Champions focus on improving their physical abilities and critical hit chances."
+)
+
+subclass_battlemaster = Subclass.create!(
+  name: "Battle Master",
+  character_class: class_fighter,
+  description: "Those who emulate the archetypal Battle Master employ martial techniques passed down through generations.",
+  subclass_features: {
+    "3" => { "combat_superiority" => true, "maneuvers" => true },
+    "7" => { "know_your_enemy" => true },
+    "10" => { "improved_combat_superiority" => true },
+    "15" => { "relentless" => true },
+    "18" => { "combat_superiority_master" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "combat_superiority" => true },
+  notes: "Battle Masters use superiority dice to fuel special maneuvers that enhance their combat effectiveness."
+)
+
+# === ROGUE ===
+class_rogue = CharacterClass.create!(
+  name: "Rogue",
+  description: "A scoundrel who uses stealth and trickery to accomplish what others can't.",
+  hit_die: 8,
+  primary_ability: ["Dexterity"],
+  saving_throw_proficiencies: ["Dexterity", "Intelligence"],
+  skill_proficiencies: {
+    "choose" => 4,
+    "available" => ["Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"]
+  },
+  weapon_proficiencies: ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"],
+  armor_proficiencies: ["Light armor"],
+  tool_proficiencies: ["Thieves' tools"],
+  starting_equipment: {
+    "weapon" => "Rapier or shortsword",
+    "ranged" => "Shortbow and quiver of 20 arrows",
+    "armor" => "Leather armor",
+    "pack" => "Burglar's pack",
+    "other" => "Two daggers, thieves' tools"
+  },
+  spellcasting: {},
+  class_features: {
+    "1" => { "expertise" => true, "sneak_attack" => true, "thieves_cant" => true },
+    "2" => { "cunning_action" => true },
+    "3" => { "roguish_archetype" => true },
+    "4" => { "ability_score_improvement" => true },
+    "5" => { "uncanny_dodge" => true },
+    "6" => { "expertise" => true },
+    "7" => { "evasion" => true },
+    "8" => { "ability_score_improvement" => true },
+    "9" => { "roguish_archetype_feature" => true },
+    "10" => { "ability_score_improvement" => true },
+    "11" => { "reliable_talent" => true },
+    "12" => { "ability_score_improvement" => true },
+    "13" => { "roguish_archetype_feature" => true },
+    "14" => { "blindsense" => true },
+    "15" => { "slippery_mind" => true },
+    "16" => { "ability_score_improvement" => true },
+    "17" => { "roguish_archetype_feature" => true },
+    "18" => { "elusive" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "stroke_of_luck" => true }
+  },
+  multiclass_requirements: { "Dexterity" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Rogues rely on skill, stealth, and their foes' vulnerabilities to get the upper hand in any situation."
+)
+
+subclass_thief = Subclass.create!(
+  name: "Thief",
+  character_class: class_rogue,
+  description: "You hone your skills in the larcenous arts. Burglars, bandits, cutpurses, and other criminals typically follow this archetype.",
+  subclass_features: {
+    "3" => { "fast_hands" => true, "second_story_work" => true },
+    "9" => { "supreme_sneak" => true },
+    "13" => { "use_magic_device" => true },
+    "17" => { "thiefs_reflexes" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "fast_hands" => true },
+  notes: "Thieves are skilled at breaking and entering, pickpocketing, and other forms of larceny."
+)
+
+subclass_assassin = Subclass.create!(
+  name: "Assassin",
+  character_class: class_rogue,
+  description: "You focus your training on the grim art of death. Those who adhere to this archetype are diverse.",
+  subclass_features: {
+    "3" => { "bonus_proficiencies" => true, "assassinate" => true },
+    "9" => { "infiltration_expertise" => true },
+    "13" => { "impostor" => true },
+    "17" => { "death_strike" => true }
+  },
+  spells: [],
+  proficiencies: {
+    "tools" => ["Disguise kit", "Poisoner's kit"]
+  },
+  bonuses: { "sneak_attack" => true },
+  notes: "Assassins are skilled at elimination, infiltration, and disguise."
+)
+
+# === WIZARD ===
+class_wizard = CharacterClass.create!(
+  name: "Wizard",
+  description: "A scholarly magic-user capable of manipulating the structures of reality.",
+  hit_die: 6,
+  primary_ability: ["Intelligence"],
+  saving_throw_proficiencies: ["Intelligence", "Wisdom"],
+  skill_proficiencies: {
+    "choose" => 2,
+    "available" => ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"]
+  },
+  weapon_proficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+  armor_proficiencies: [],
+  tool_proficiencies: [],
+  starting_equipment: {
+    "weapon" => "Quarterstaff or dagger",
+    "ranged" => "Light crossbow and 20 bolts or any simple weapon",
+    "armor" => "None",
+    "pack" => "Scholar's pack",
+    "other" => "Spellbook, component pouch"
+  },
+  spellcasting: {
+    "ability" => "Intelligence",
+    "ritual_casting" => true,
+    "spellcasting_focus" => "Arcane focus",
+    "spells_known" => "Spellbook",
+    "cantrips_known" => { "1" => 3, "4" => 4, "10" => 5 }
+  },
+  class_features: {
+    "1" => { "spellcasting" => true, "arcane_recovery" => true },
+    "2" => { "arcane_tradition" => true },
+    "4" => { "ability_score_improvement" => true },
+    "6" => { "arcane_tradition_feature" => true },
+    "8" => { "ability_score_improvement" => true },
+    "10" => { "arcane_tradition_feature" => true },
+    "12" => { "ability_score_improvement" => true },
+    "14" => { "arcane_tradition_feature" => true },
+    "16" => { "ability_score_improvement" => true },
+    "18" => { "spell_mastery" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "signature_spells" => true }
+  },
+  multiclass_requirements: { "Intelligence" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Wizards are supreme magic-users, defined by their spellcasting ability and vast knowledge of arcane lore."
+)
+
+subclass_evocation = Subclass.create!(
+  name: "School of Evocation",
+  character_class: class_wizard,
+  description: "You focus your study on magic that creates powerful elemental effects such as bitter cold, searing flame, rolling thunder, crackling lightning, and burning acid.",
+  subclass_features: {
+    "2" => { "evocation_savant" => true, "sculpt_spells" => true },
+    "6" => { "potent_cantrip" => true },
+    "10" => { "empowered_evocation" => true },
+    "14" => { "overchannel" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: {},
+  notes: "Evocation wizards specialize in destructive magic, learning to sculpt their spells to avoid harming allies."
+)
+
+# === CLERIC ===
+class_cleric = CharacterClass.create!(
+  name: "Cleric",
+  description: "A priestly champion who wields divine magic in service of a higher power.",
+  hit_die: 8,
+  primary_ability: ["Wisdom"],
+  saving_throw_proficiencies: ["Wisdom", "Charisma"],
+  skill_proficiencies: {
+    "choose" => 2,
+    "available" => ["History", "Insight", "Medicine", "Persuasion", "Religion"]
+  },
+  weapon_proficiencies: ["Simple weapons"],
+  armor_proficiencies: ["Light armor", "Medium armor", "Shields"],
+  tool_proficiencies: [],
+  starting_equipment: {
+    "weapon" => "Mace or warhammer",
+    "armor" => "Scale mail or leather armor",
+    "shield" => "Shield",
+    "ranged" => "Light crossbow and 20 bolts or any simple weapon",
+    "pack" => "Priest's pack",
+    "other" => "Holy symbol"
+  },
+  spellcasting: {
+    "ability" => "Wisdom",
+    "ritual_casting" => true,
+    "spellcasting_focus" => "Holy symbol",
+    "spells_known" => "All cleric spells",
+    "cantrips_known" => { "1" => 3, "4" => 4, "10" => 5 }
+  },
+  class_features: {
+    "1" => { "spellcasting" => true, "divine_domain" => true },
+    "2" => { "channel_divinity" => true, "divine_domain_feature" => true },
+    "4" => { "ability_score_improvement" => true },
+    "5" => { "destroy_undead" => true },
+    "6" => { "channel_divinity_2" => true, "divine_domain_feature" => true },
+    "8" => { "ability_score_improvement" => true, "divine_domain_feature" => true },
+    "10" => { "divine_intervention" => true },
+    "12" => { "ability_score_improvement" => true },
+    "14" => { "destroy_undead_improvement" => true },
+    "16" => { "ability_score_improvement" => true },
+    "17" => { "divine_domain_feature" => true },
+    "18" => { "channel_divinity_3" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "divine_intervention_improvement" => true }
+  },
+  multiclass_requirements: { "Wisdom" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Clerics are intermediaries between the mortal world and the distant planes of the gods."
+)
 
 # === ITEMS ===
 # PHB Weapons and Armor with complete data mapping
@@ -1375,42 +1730,474 @@ team2 = User.second.characters.limit(3)
 BattleServices::BattleInitializer.new(battle, team1, team2).run
 
 # === ABILITIES ===
+# PHB Class Features and Abilities with comprehensive data mapping
+
+# === BARBARIAN ABILITIES ===
 rage = Ability.create!(
   name: "Rage",
-  class_name: "Barbarian",
+  description: "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.",
+  ability_type: "class_feature",
+  source: "Barbarian",
   level_required: 1,
-  action_type: "active",
-  description: "Gain +2 damage and resistance to physical for 3 turns.",
-  cooldown_turns: 5
+  action_type: "bonus_action",
+  duration: "1 minute",
+  range: "Self",
+  uses_per_rest: "long_rest",
+  max_uses: 2,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "3" => { "max_uses" => 3 },
+    "6" => { "max_uses" => 4 },
+    "12" => { "max_uses" => 5 },
+    "17" => { "max_uses" => 6 },
+    "20" => { "max_uses" => 999 }
+  },
+  notes: "While raging: +2 damage to STR melee attacks, advantage on STR checks/saves, resistance to bludgeoning/piercing/slashing damage. Cannot cast spells or concentrate. Ends if you don't attack or take damage."
 )
 
-sneak = Ability.create!(
-  name: "Sneak Attack",
-  class_name: "Rogue",
+unarmored_defense_barbarian = Ability.create!(
+  name: "Unarmored Defense",
+  description: "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier.",
+  ability_type: "class_feature",
+  source: "Barbarian",
   level_required: 1,
   action_type: "passive",
-  description: "Deal +1d6 damage when you have advantage.",
-  cooldown_turns: 0
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You can use a shield and still gain this benefit."
 )
 
+reckless_attack = Ability.create!(
+  name: "Reckless Attack",
+  description: "You can throw aside all concern for defense to attack with fierce desperation.",
+  ability_type: "class_feature",
+  source: "Barbarian",
+  level_required: 2,
+  action_type: "action",
+  duration: "Until start of next turn",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "When you make your first attack on your turn, you can decide to attack recklessly. You have advantage on melee weapon attack rolls using STR, but attack rolls against you have advantage until your next turn."
+)
+
+danger_sense = Ability.create!(
+  name: "Danger Sense",
+  description: "You gain an uncanny sense of when things nearby aren't as they should be.",
+  ability_type: "class_feature",
+  source: "Barbarian",
+  level_required: 2,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. You can't be blinded, deafened, or incapacitated."
+)
+
+# === FIGHTER ABILITIES ===
 second_wind = Ability.create!(
   name: "Second Wind",
-  class_name: "Fighter",
+  description: "You have a limited well of stamina that you can draw on to protect yourself from harm.",
+  ability_type: "class_feature",
+  source: "Fighter",
   level_required: 1,
-  action_type: "active",
-  description: "Recover 1d10 + fighter level hit points.",
-  cooldown_turns: 3
+  action_type: "bonus_action",
+  duration: "Instantaneous",
+  range: "Self",
+  uses_per_rest: "short_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You regain 1d10 + your fighter level hit points."
 )
 
-# Assign abilities to characters
+action_surge = Ability.create!(
+  name: "Action Surge",
+  description: "You can push yourself beyond your normal limits for a moment.",
+  ability_type: "class_feature",
+  source: "Fighter",
+  level_required: 2,
+  action_type: "action",
+  duration: "Current turn",
+  range: "Self",
+  uses_per_rest: "short_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "17" => { "max_uses" => 2 }
+  },
+  notes: "On your turn, you can take one additional action on top of your regular action and a possible bonus action."
+)
+
+fighting_style_archery = Ability.create!(
+  name: "Fighting Style: Archery",
+  description: "You gain a +2 bonus to attack rolls you make with ranged weapons.",
+  ability_type: "class_feature",
+  source: "Fighter",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "This bonus applies to all ranged weapon attacks."
+)
+
+fighting_style_defense = Ability.create!(
+  name: "Fighting Style: Defense",
+  description: "While you are wearing armor, you gain a +1 bonus to AC.",
+  ability_type: "class_feature",
+  source: "Fighter",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "This bonus applies while wearing any armor."
+)
+
+fighting_style_dueling = Ability.create!(
+  name: "Fighting Style: Dueling",
+  description: "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.",
+  ability_type: "class_feature",
+  source: "Fighter",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "The weapon must be one-handed and you cannot be holding another weapon or shield."
+)
+
+# === ROGUE ABILITIES ===
+sneak_attack = Ability.create!(
+  name: "Sneak Attack",
+  description: "You know how to strike subtly and exploit a foe's distraction.",
+  ability_type: "class_feature",
+  source: "Rogue",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Instantaneous",
+  range: "Weapon range",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  damage_dice: "1d6",
+  scaling: {
+    "3" => { "damage_dice" => "2d6" },
+    "5" => { "damage_dice" => "3d6" },
+    "7" => { "damage_dice" => "4d6" },
+    "9" => { "damage_dice" => "5d6" },
+    "11" => { "damage_dice" => "6d6" },
+    "13" => { "damage_dice" => "7d6" },
+    "15" => { "damage_dice" => "8d6" },
+    "17" => { "damage_dice" => "9d6" },
+    "19" => { "damage_dice" => "10d6" }
+  },
+  notes: "Once per turn, you can deal extra damage to one creature you hit with an attack if you have advantage on the attack roll or if another enemy is within 5 feet of the target. The attack must use a finesse or ranged weapon."
+)
+
+expertise = Ability.create!(
+  name: "Expertise",
+  description: "Choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.",
+  ability_type: "class_feature",
+  source: "Rogue",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "6" => { "additional_skills" => 2 }
+  },
+  notes: "At 1st level, choose two skills. At 6th level, choose two more skills."
+)
+
+thieves_cant = Ability.create!(
+  name: "Thieves' Cant",
+  description: "You learned thieves' cant, a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation.",
+  ability_type: "class_feature",
+  source: "Rogue",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You can communicate with other rogues who know thieves' cant, and you can hide messages in normal conversation."
+)
+
+cunning_action = Ability.create!(
+  name: "Cunning Action",
+  description: "Your quick thinking and agility allow you to move and act quickly.",
+  ability_type: "class_feature",
+  source: "Rogue",
+  level_required: 2,
+  action_type: "bonus_action",
+  duration: "Instantaneous",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You can take a bonus action on each of your turns to take the Dash, Disengage, or Hide action."
+)
+
+uncanny_dodge = Ability.create!(
+  name: "Uncanny Dodge",
+  description: "When an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you.",
+  ability_type: "class_feature",
+  source: "Rogue",
+  level_required: 5,
+  action_type: "reaction",
+  duration: "Instantaneous",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You must be able to see the attacker and not be incapacitated."
+)
+
+# === WIZARD ABILITIES ===
+arcane_recovery = Ability.create!(
+  name: "Arcane Recovery",
+  description: "You have learned to regain some of your magical energy by studying your spellbook.",
+  ability_type: "class_feature",
+  source: "Wizard",
+  level_required: 1,
+  action_type: "action",
+  duration: "Instantaneous",
+  range: "Self",
+  uses_per_rest: "long_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "During a short rest, you can recover spent spell slots with a combined level equal to or less than half your wizard level (minimum 1), and none of the slots can be 6th level or higher."
+)
+
+# === CLERIC ABILITIES ===
+channel_divinity = Ability.create!(
+  name: "Channel Divinity",
+  description: "You gain the ability to channel divine energy directly from your deity, using that energy to fuel magical effects.",
+  ability_type: "class_feature",
+  source: "Cleric",
+  level_required: 2,
+  action_type: "action",
+  duration: "Varies",
+  range: "Varies",
+  uses_per_rest: "short_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "6" => { "max_uses" => 2 },
+    "18" => { "max_uses" => 3 }
+  },
+  notes: "The effect depends on your Divine Domain. Some Channel Divinity effects require saving throws."
+)
+
+turn_undead = Ability.create!(
+  name: "Turn Undead",
+  description: "You present your holy symbol and speak a prayer censuring the undead.",
+  ability_type: "class_feature",
+  source: "Cleric",
+  level_required: 2,
+  action_type: "action",
+  duration: "1 minute",
+  range: "30 feet",
+  area_of_effect: "30-foot radius",
+  uses_per_rest: "short_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: { "verbal" => true, "somatic" => true, "material" => "holy symbol" },
+  saving_throw: "Wisdom",
+  scaling: {
+    "5" => { "destroy_cr" => 0.5 },
+    "8" => { "destroy_cr" => 1 },
+    "11" => { "destroy_cr" => 2 },
+    "14" => { "destroy_cr" => 3 },
+    "17" => { "destroy_cr" => 4 }
+  },
+  notes: "Each undead within 30 feet must make a Wisdom saving throw. Failed saves cause the creature to be turned for 1 minute. At higher levels, destroys undead of certain CR instead of turning them."
+)
+
+# === RACIAL ABILITIES ===
+darkvision = Ability.create!(
+  name: "Darkvision",
+  description: "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+  ability_type: "racial_trait",
+  source: "Elf",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "60 feet",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You can't discern color in darkness, only shades of gray."
+)
+
+fey_ancestry = Ability.create!(
+  name: "Fey Ancestry",
+  description: "You have advantage on saving throws against being charmed, and magic can't put you to sleep.",
+  ability_type: "racial_trait",
+  source: "Elf",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "This includes both magical and non-magical charm effects."
+)
+
+halfling_luck = Ability.create!(
+  name: "Lucky",
+  description: "When you roll a 1 on the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.",
+  ability_type: "racial_trait",
+  source: "Halfling",
+  level_required: 1,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "This ability only triggers on natural 1s, not when your total roll equals 1."
+)
+
+# === CANTRIPS ===
+fire_bolt = Ability.create!(
+  name: "Fire Bolt",
+  description: "You hurl a mote of fire at a creature or object within range.",
+  ability_type: "cantrip",
+  source: "Wizard",
+  level_required: 1,
+  action_type: "action",
+  duration: "Instantaneous",
+  range: "120 feet",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: { "verbal" => true, "somatic" => true },
+  damage_dice: "1d10",
+  damage_type: "fire",
+  scaling: {
+    "5" => { "damage_dice" => "2d10" },
+    "11" => { "damage_dice" => "3d10" },
+    "17" => { "damage_dice" => "4d10" }
+  },
+  notes: "Make a ranged spell attack. On hit, the target takes fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried."
+)
+
+mage_hand = Ability.create!(
+  name: "Mage Hand",
+  description: "A spectral, floating hand appears at a point you choose within range.",
+  ability_type: "cantrip",
+  source: "Wizard",
+  level_required: 1,
+  action_type: "action",
+  duration: "1 minute",
+  range: "30 feet",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: { "verbal" => true, "somatic" => true },
+  scaling: {},
+  notes: "The hand can manipulate objects, open doors, stow or retrieve items, but can't attack, activate magic items, or carry more than 10 pounds."
+)
+
+# Assign abilities to characters based on their class and race
 Character.all.each do |char|
   case char.character_class.name
   when "Barbarian"
-    CharacterAbility.create!(character: char, ability: rage, uses_remaining: 1)
-  when "Rogue"
-    CharacterAbility.create!(character: char, ability: sneak, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: rage, uses_remaining: 2)
+    CharacterAbility.create!(character: char, ability: unarmored_defense_barbarian, uses_remaining: nil)
+    if char.level >= 2
+      CharacterAbility.create!(character: char, ability: reckless_attack, uses_remaining: nil)
+      CharacterAbility.create!(character: char, ability: danger_sense, uses_remaining: nil)
+    end
   when "Fighter"
     CharacterAbility.create!(character: char, ability: second_wind, uses_remaining: 1)
+    CharacterAbility.create!(character: char, ability: fighting_style_defense, uses_remaining: nil)
+    if char.level >= 2
+      CharacterAbility.create!(character: char, ability: action_surge, uses_remaining: 1)
+    end
+  when "Rogue"
+    CharacterAbility.create!(character: char, ability: sneak_attack, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: expertise, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: thieves_cant, uses_remaining: nil)
+    if char.level >= 2
+      CharacterAbility.create!(character: char, ability: cunning_action, uses_remaining: nil)
+    end
+  when "Wizard"
+    CharacterAbility.create!(character: char, ability: arcane_recovery, uses_remaining: 1)
+    CharacterAbility.create!(character: char, ability: fire_bolt, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: mage_hand, uses_remaining: nil)
+  when "Cleric"
+    if char.level >= 2
+      CharacterAbility.create!(character: char, ability: channel_divinity, uses_remaining: 1)
+      CharacterAbility.create!(character: char, ability: turn_undead, uses_remaining: 1)
+    end
+  end
+
+  # Assign racial abilities
+  case char.race.name
+  when "Elf"
+    CharacterAbility.create!(character: char, ability: darkvision, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: fey_ancestry, uses_remaining: nil)
+  when "Halfling"
+    CharacterAbility.create!(character: char, ability: halfling_luck, uses_remaining: nil)
   end
 end
 
