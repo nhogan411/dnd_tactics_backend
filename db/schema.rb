@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_15_000010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.integer "cooldown_turns"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "ability_type"
+    t.string "source"
+    t.jsonb "prerequisites", default: {}
+    t.jsonb "components", default: {}
+    t.string "duration"
+    t.string "range"
+    t.string "area_of_effect"
+    t.string "damage_dice"
+    t.string "damage_type"
+    t.string "saving_throw"
+    t.string "uses_per_rest"
+    t.integer "max_uses"
+    t.string "recharge"
+    t.jsonb "scaling", default: {}
+    t.text "notes"
+    t.index ["ability_type"], name: "index_abilities_on_ability_type"
+    t.index ["action_type"], name: "index_abilities_on_action_type"
+    t.index ["level_required"], name: "index_abilities_on_level_required"
+    t.index ["source"], name: "index_abilities_on_source"
   end
 
   create_table "ability_scores", force: :cascade do |t|
@@ -33,6 +52,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["character_id"], name: "index_ability_scores_on_character_id"
+  end
+
+  create_table "backgrounds", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description", null: false
+    t.jsonb "skill_proficiencies", default: []
+    t.jsonb "language_proficiencies", default: []
+    t.jsonb "tool_proficiencies", default: []
+    t.jsonb "equipment", default: {}
+    t.integer "starting_gold", default: 0
+    t.text "feature_name"
+    t.text "feature_description"
+    t.jsonb "suggested_characteristics", default: {}
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["language_proficiencies"], name: "index_backgrounds_on_language_proficiencies", using: :gin
+    t.index ["name"], name: "index_backgrounds_on_name", unique: true
+    t.index ["skill_proficiencies"], name: "index_backgrounds_on_skill_proficiencies", using: :gin
+    t.index ["tool_proficiencies"], name: "index_backgrounds_on_tool_proficiencies", using: :gin
   end
 
   create_table "battle_boards", force: :cascade do |t|
@@ -142,6 +181,34 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.jsonb "bonuses"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.integer "hit_die", default: 8
+    t.jsonb "primary_ability", default: []
+    t.jsonb "saving_throw_proficiencies", default: []
+    t.jsonb "skill_proficiencies", default: {}
+    t.jsonb "weapon_proficiencies", default: []
+    t.jsonb "armor_proficiencies", default: []
+    t.jsonb "tool_proficiencies", default: []
+    t.jsonb "starting_equipment", default: {}
+    t.jsonb "spellcasting", default: {}
+    t.jsonb "class_features", default: {}
+    t.jsonb "multiclass_requirements", default: {}
+    t.text "notes"
+    t.index ["hit_die"], name: "index_character_classes_on_hit_die"
+    t.index ["primary_ability"], name: "index_character_classes_on_primary_ability", using: :gin
+  end
+
+  create_table "character_feats", force: :cascade do |t|
+    t.bigint "character_id", null: false
+    t.bigint "feat_id", null: false
+    t.integer "level_gained", default: 1
+    t.jsonb "selected_options", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id", "feat_id"], name: "index_character_feats_on_character_id_and_feat_id", unique: true
+    t.index ["character_id"], name: "index_character_feats_on_character_id"
+    t.index ["feat_id"], name: "index_character_feats_on_feat_id"
+    t.index ["level_gained"], name: "index_character_feats_on_level_gained"
   end
 
   create_table "character_items", force: :cascade do |t|
@@ -152,6 +219,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.boolean "equipped"
     t.index ["character_id"], name: "index_character_items_on_character_id"
     t.index ["item_id"], name: "index_character_items_on_item_id"
+  end
+
+  create_table "character_spells", force: :cascade do |t|
+    t.bigint "character_id", null: false
+    t.bigint "spell_id", null: false
+    t.boolean "prepared", default: false
+    t.boolean "known", default: true
+    t.string "source", default: "class", null: false
+    t.integer "level_gained", default: 1, null: false
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id", "spell_id"], name: "index_character_spells_on_character_id_and_spell_id", unique: true
+    t.index ["character_id"], name: "index_character_spells_on_character_id"
+    t.index ["known"], name: "index_character_spells_on_known"
+    t.index ["prepared"], name: "index_character_spells_on_prepared"
+    t.index ["source"], name: "index_character_spells_on_source"
+    t.index ["spell_id"], name: "index_character_spells_on_spell_id"
   end
 
   create_table "characters", force: :cascade do |t|
@@ -167,11 +252,71 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.integer "level"
     t.integer "movement_speed"
     t.integer "visibility_range"
+    t.integer "current_hp", default: 0
+    t.integer "temporary_hp", default: 0
+    t.integer "armor_class", default: 10
+    t.integer "initiative_modifier", default: 0
+    t.integer "proficiency_bonus", default: 2
+    t.boolean "inspiration", default: false
+    t.integer "experience_points", default: 0
+    t.integer "next_level_xp", default: 300
+    t.integer "carrying_capacity", default: 150
+    t.integer "currency_gp", default: 0
+    t.integer "currency_sp", default: 0
+    t.integer "currency_cp", default: 0
+    t.jsonb "skill_proficiencies", default: []
+    t.jsonb "skill_expertise", default: []
+    t.jsonb "weapon_proficiencies", default: []
+    t.jsonb "armor_proficiencies", default: []
+    t.jsonb "tool_proficiencies", default: []
+    t.jsonb "language_proficiencies", default: []
+    t.string "spellcasting_ability"
+    t.integer "spell_save_dc", default: 8
+    t.integer "spell_attack_bonus", default: 0
+    t.jsonb "spell_slots", default: {}
+    t.jsonb "spells_known", default: []
+    t.jsonb "cantrips_known", default: []
+    t.jsonb "conditions", default: {}
+    t.jsonb "temporary_effects", default: {}
+    t.bigint "background_id"
+    t.text "personality_traits"
+    t.text "ideals"
+    t.text "bonds"
+    t.text "flaws"
+    t.jsonb "spell_slots_used", default: {}
+    t.jsonb "attuned_items", default: []
+    t.integer "attunement_slots", default: 3
+    t.integer "death_save_successes", default: 0
+    t.integer "death_save_failures", default: 0
+    t.jsonb "hit_dice_used", default: {}
+    t.index ["attuned_items"], name: "index_characters_on_attuned_items", using: :gin
+    t.index ["background_id"], name: "index_characters_on_background_id"
     t.index ["character_class_id"], name: "index_characters_on_character_class_id"
+    t.index ["conditions"], name: "index_characters_on_conditions", using: :gin
+    t.index ["experience_points"], name: "index_characters_on_experience_points"
+    t.index ["hit_dice_used"], name: "index_characters_on_hit_dice_used", using: :gin
+    t.index ["level"], name: "index_characters_on_level"
     t.index ["race_id"], name: "index_characters_on_race_id"
+    t.index ["skill_proficiencies"], name: "index_characters_on_skill_proficiencies", using: :gin
+    t.index ["spell_slots_used"], name: "index_characters_on_spell_slots_used", using: :gin
     t.index ["subclass_id"], name: "index_characters_on_subclass_id"
     t.index ["subrace_id"], name: "index_characters_on_subrace_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
+  end
+
+  create_table "feats", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.jsonb "prerequisites", default: {}
+    t.jsonb "benefits", default: {}
+    t.jsonb "ability_score_increases", default: {}
+    t.boolean "half_feat", default: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["half_feat"], name: "index_feats_on_half_feat"
+    t.index ["name"], name: "index_feats_on_name", unique: true
+    t.index ["prerequisites"], name: "index_feats_on_prerequisites", using: :gin
   end
 
   create_table "items", force: :cascade do |t|
@@ -217,6 +362,43 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "default_visibility_range"
+    t.text "description"
+    t.string "size", default: "Medium"
+    t.integer "speed", default: 30
+    t.jsonb "languages", default: []
+    t.jsonb "proficiencies", default: {}
+    t.jsonb "traits", default: {}
+    t.text "notes"
+    t.index ["size"], name: "index_races_on_size"
+  end
+
+  create_table "spells", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description", null: false
+    t.integer "level", default: 0, null: false
+    t.string "school", null: false
+    t.string "casting_time", null: false
+    t.string "range", null: false
+    t.string "duration", null: false
+    t.jsonb "components", default: {}
+    t.string "material_components"
+    t.boolean "concentration", default: false
+    t.boolean "ritual", default: false
+    t.text "at_higher_levels"
+    t.jsonb "class_lists", default: []
+    t.jsonb "damage", default: {}
+    t.jsonb "effects", default: {}
+    t.string "saving_throw"
+    t.string "attack_type"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["class_lists"], name: "index_spells_on_class_lists", using: :gin
+    t.index ["concentration"], name: "index_spells_on_concentration"
+    t.index ["level"], name: "index_spells_on_level"
+    t.index ["name"], name: "index_spells_on_name", unique: true
+    t.index ["ritual"], name: "index_spells_on_ritual"
+    t.index ["school"], name: "index_spells_on_school"
   end
 
   create_table "starting_squares", force: :cascade do |t|
@@ -235,7 +417,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.jsonb "bonuses"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.jsonb "subclass_features", default: {}
+    t.jsonb "spells", default: []
+    t.jsonb "proficiencies", default: {}
+    t.text "notes"
     t.index ["character_class_id"], name: "index_subclasses_on_character_class_id"
+    t.index ["spells"], name: "index_subclasses_on_spells", using: :gin
   end
 
   create_table "subraces", force: :cascade do |t|
@@ -244,7 +432,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
     t.jsonb "ability_modifiers"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "size"
+    t.integer "speed"
+    t.jsonb "languages", default: []
+    t.jsonb "proficiencies", default: {}
+    t.jsonb "traits", default: {}
+    t.jsonb "spells", default: []
+    t.text "notes"
     t.index ["race_id"], name: "index_subraces_on_race_id"
+    t.index ["size"], name: "index_subraces_on_size"
   end
 
   create_table "users", force: :cascade do |t|
@@ -274,8 +471,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000001) do
   add_foreign_key "character_abilities", "characters"
   add_foreign_key "character_class_levels", "character_classes"
   add_foreign_key "character_class_levels", "characters"
+  add_foreign_key "character_feats", "characters"
+  add_foreign_key "character_feats", "feats"
   add_foreign_key "character_items", "characters"
   add_foreign_key "character_items", "items"
+  add_foreign_key "character_spells", "characters"
+  add_foreign_key "character_spells", "spells"
+  add_foreign_key "characters", "backgrounds"
   add_foreign_key "characters", "character_classes"
   add_foreign_key "characters", "races"
   add_foreign_key "characters", "subclasses"
