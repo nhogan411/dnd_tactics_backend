@@ -440,6 +440,170 @@ subclass_totem = Subclass.create!(
   notes: "Totem Warriors gain abilities based on spirit animals: Bear (resistance), Eagle (sight), or Wolf (pack tactics)."
 )
 
+# === BARD ===
+class_bard = CharacterClass.create!(
+  name: "Bard",
+  description: "A master of song, speech, and the magic they contain.",
+  hit_die: 8,
+  primary_ability: ["Charisma"],
+  saving_throw_proficiencies: ["Dexterity", "Charisma"],
+  skill_proficiencies: {
+    "choose" => 3,
+    "available" => ["Deception", "History", "Investigation", "Persuasion", "Performance", "Sleight of Hand", "Stealth", "Acrobatics", "Animal Handling", "Arcana", "Athletics", "Insight", "Intimidation", "Medicine", "Nature", "Perception", "Religion", "Survival"]
+  },
+  weapon_proficiencies: ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"],
+  armor_proficiencies: ["Light armor"],
+  tool_proficiencies: ["Three musical instruments of your choice"],
+  starting_equipment: {
+    "weapon" => "Rapier, longsword, or any simple weapon",
+    "armor" => "Leather armor",
+    "pack" => "Entertainer's pack",
+    "instrument" => "Musical instrument",
+    "other" => "Dagger, simple weapon"
+  },
+  spellcasting: {
+    "ability" => "Charisma",
+    "ritual_casting" => true,
+    "spellcasting_focus" => "Musical instrument",
+    "spells_known" => "Spells known",
+    "cantrips_known" => { "1" => 2, "4" => 3, "10" => 4 }
+  },
+  class_features: {
+    "1" => { "spellcasting" => true, "bardic_inspiration" => true },
+    "2" => { "jack_of_all_trades" => true, "song_of_rest" => true },
+    "3" => { "bardic_college" => true, "expertise" => true },
+    "4" => { "ability_score_improvement" => true },
+    "5" => { "bardic_inspiration_d8" => true, "font_of_inspiration" => true },
+    "6" => { "countercharm" => true, "bardic_college_feature" => true },
+    "8" => { "ability_score_improvement" => true },
+    "9" => { "song_of_rest_d8" => true },
+    "10" => { "bardic_inspiration_d10" => true, "expertise" => true, "magical_secrets" => true },
+    "12" => { "ability_score_improvement" => true },
+    "13" => { "song_of_rest_d10" => true },
+    "14" => { "magical_secrets" => true, "bardic_college_feature" => true },
+    "15" => { "bardic_inspiration_d12" => true },
+    "16" => { "ability_score_improvement" => true },
+    "17" => { "song_of_rest_d12" => true },
+    "18" => { "magical_secrets" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "superior_inspiration" => true }
+  },
+  multiclass_requirements: { "Charisma" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Bards are versatile spellcasters who inspire allies and hinder enemies through music and magic."
+)
+
+subclass_college_ofLore = Subclass.create!(
+  name: "College of Lore",
+  character_class: class_bard,
+  description: "Bards of the College of Lore know something about many things. They can be found wherever knowledge is to be had.",
+  subclass_features: {
+    "3" => { "bonus_proficiencies" => true, "cutting_words" => true },
+    "6" => { "enchanted_lyre" => true },
+    "14" => { "peerless_skill" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "bardic_inspiration" => true },
+  notes: "Bards of the College of Lore can use their magic to heal, enhance abilities, and hinder foes."
+)
+
+subclass_college_ofValor = Subclass.create!(
+  name: "College of Valor",
+  character_class: class_bard,
+  description: "Bards of the College of Valor are inspired by the magic of their own deeds and those of the heroes they admire.",
+  subclass_features: {
+    "3" => { "combat_inspiration" => true, "bonus_proficiencies" => true },
+    "6" => { "extra_attack" => true },
+    "14" => { "battle_magic" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "combat_inspiration" => true },
+  notes: "Bards of the College of Valor can inspire others in battle, gaining extra attacks and magical abilities."
+)
+
+# === DRUID ===
+class_druid = CharacterClass.create!(
+  name: "Druid",
+  description: "A priest of the Old Faith, wielding elemental forces and transforming into beasts.",
+  hit_die: 8,
+  primary_ability: ["Wisdom"],
+  saving_throw_proficiencies: ["Intelligence", "Wisdom"],
+  skill_proficiencies: {
+    "choose" => 2,
+    "available" => ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"]
+  },
+  weapon_proficiencies: ["Clubs", "Daggers", "Darts", "Javelins", "Maces", "Quarterstaffs", "Scimitars", "Sickles", "Slings", "Spears"],
+  armor_proficiencies: ["Light armor", "Medium armor", "Shields (non-metal)"],
+  tool_proficiencies: ["Herbalism kit"],
+  starting_equipment: {
+    "weapon" => "Scimitar or any simple melee weapon",
+    "armor" => "Leather armor",
+    "shield" => "Shield",
+    "pack" => "Explorer's pack",
+    "other" => "Leather armor, explorer's pack"
+  },
+  spellcasting: {
+    "ability" => "Wisdom",
+    "ritual_casting" => true,
+    "spellcasting_focus" => "Druidic focus",
+    "spells_known" => "All druid spells",
+    "cantrips_known" => { "1" => 2, "4" => 3, "10" => 4 }
+  },
+  class_features: {
+    "1" => { "druidcraft" => true, "spellcasting" => true },
+    "2" => { "wild_shape" => true, "druid_circle" => true },
+    "4" => { "wild_shape_improvement" => true, "ability_score_improvement" => true },
+    "6" => { "druid_circle_feature" => true },
+    "8" => { "wild_shape_improvement" => true, "ability_score_improvement" => true },
+    "10" => { "druid_circle_feature" => true },
+    "12" => { "ability_score_improvement" => true },
+    "14" => { "druid_circle_feature" => true },
+    "16" => { "ability_score_improvement" => true },
+    "18" => { "timeless_body" => true, "beast_spells" => true },
+    "19" => { "ability_score_improvement" => true },
+    "20" => { "archdruid" => true }
+  },
+  multiclass_requirements: { "Wisdom" => 13 },
+  ability_requirements: {},
+  bonuses: {},
+  notes: "Druids cannot wear or use metal armor and shields. They can transform into beasts and cast spells."
+)
+
+subclass_circle_ofLand = Subclass.create!(
+  name: "Circle of the Land",
+  character_class: class_druid,
+  description: "Druids of the Circle of the Land draw their power from the land itself, gaining abilities based on their chosen terrain.",
+  subclass_features: {
+    "2" => { "circle_spells" => true, "land_stride" => true },
+    "6" => { "nature's_recovery" => true },
+    "10" => { "circle_spells" => true },
+    "14" => { "nature's_warding" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "circle_spells" => true },
+  notes: "Circle of the Land druids have spells and abilities that reflect the power of their chosen terrain."
+)
+
+subclass_circle_ofMoon = Subclass.create!(
+  name: "Circle of the Moon",
+  character_class: class_druid,
+  description: "Druids of the Circle of the Moon are warriors as well as spellcasters, able to fight with primal ferocity in beast form.",
+  subclass_features: {
+    "2" => { "combat_wild_shape" => true, "circle_forms" => true },
+    "6" => { "primal_strike" => true },
+    "10" => { "circle_forms" => true },
+    "14" => { "elemental_wild_shape" => true }
+  },
+  spells: [],
+  proficiencies: {},
+  bonuses: { "circle_forms" => true },
+  notes: "Circle of the Moon druids can use their Wild Shape to transform into more powerful beasts and gain combat-focused abilities."
+)
+
 # === FIGHTER ===
 class_fighter = CharacterClass.create!(
   name: "Fighter",
@@ -1411,7 +1575,7 @@ heavy_armor = [
     item_type: "armor",
     description: "Interlocking metal plates.",
     rarity: "common",
-    cost_gp: 1500,
+       cost_gp: 1500,
     weight_lbs: 65,
     armor_class: 18,
     armor_type: "heavy",
@@ -1808,6 +1972,112 @@ danger_sense = Ability.create!(
   notes: "You have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. You can't be blinded, deafened, or incapacitated."
 )
 
+# === BARD ABILITIES ===
+bardic_inspiration = Ability.create!(
+  name: "Bardic Inspiration",
+  description: "You can inspire others through stirring words or music. To do so, you expend one use of your bardic inspiration.",
+  ability_type: "class_feature",
+  source: "Bard",
+  level_required: 1,
+  action_type: "bonus_action",
+  duration: "10 minutes",
+  range: "30 feet",
+  uses_per_rest: "long_rest",
+  max_uses: 2,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "5" => { "max_uses" => 3 },
+    "10" => { "max_uses" => 4 },
+    "15" => { "max_uses" => 5 },
+    "20" => { "max_uses" => 6 }
+  },
+  notes: "Choose one creature other than yourself within 30 feet. That creature gains an inspiration die (a d6). Once within the next 10 minutes, the creature can add the die to one ability check, attack roll, or saving throw it makes. The creature can wait until after it rolls the d20 before deciding to use the inspiration die, and must decide before the DM says whether the roll succeeds or fails. The inspiration die increases as you gain levels in this class."
+)
+
+jack_of_all_trades = Ability.create!(
+  name: "Jack of All Trades",
+  description: "You gain proficiency in all skills and tools.",
+  ability_type: "class_feature",
+  source: "Bard",
+  level_required: 2,
+  action_type: "passive",
+  duration: "Permanent",
+  range: "Self",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {},
+  notes: "You can add half your proficiency bonus, rounded down, to any ability check you make that doesn't already include your proficiency bonus."
+)
+
+song_of_rest = Ability.create!(
+  name: "Song of Rest",
+  description: "You can use soothing music or oration to help revitalize your wounded allies during a short rest.",
+  ability_type: "class_feature",
+  source: "Bard",
+  level_required: 2,
+  action_type: "action",
+  duration: "During a short rest",
+  range: "30 feet",
+  uses_per_rest: "long_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "5" => { "healing" => "1d8" },
+    "10" => { "healing" => "2d8" },
+    "15" => { "healing" => "3d8" },
+    "20" => { "healing" => "4d8" }
+  },
+  notes: "During a short rest, any friendly creatures who can hear you regain hit points equal to the number rolled on the die."
+)
+
+# === DRUID ABILITIES ===
+druidcraft = Ability.create!(
+  name: "Druidcraft",
+  description: "You can predict the weather and create small magical effects.",
+  ability_type: "cantrip",
+  source: "Druid",
+  level_required: 1,
+  action_type: "action",
+  duration: "Instantaneous",
+  range: "30 feet",
+  uses_per_rest: "unlimited",
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: { "verbal" => true, "somatic" => true },
+  scaling: {},
+  notes: "You create one of the following effects: a harmless sensory effect, a light drizzle or strong wind, or a faint odor or sweet music."
+)
+
+wild_shape = Ability.create!(
+  name: "Wild Shape",
+  description: "You can use your action to magically assume the shape of a beast that you have seen before.",
+  ability_type: "class_feature",
+  source: "Druid",
+  level_required: 2,
+  action_type: "action",
+  duration: "Concentration, up to 1 hour",
+  range: "Self",
+  uses_per_rest: "short_rest",
+  max_uses: 1,
+  cooldown_turns: 0,
+  prerequisites: {},
+  components: {},
+  scaling: {
+    "4" => { "max_uses" => 2 },
+    "8" => { "max_uses" => 3 },
+    "12" => { "max_uses" => 4 },
+    "16" => { "max_uses" => 5 },
+    "20" => { "max_uses" => 6 }
+  },
+  notes: "You can transform into a beast with a CR equal to or less than your druid level divided by 3 (rounded down). You can stay in this form for a number of hours equal to half your druid level (rounded down). You revert to your true form if you fall unconscious, drop to 0 hit points, or use this feature again."
+)
+
 # === FIGHTER ABILITIES ===
 second_wind = Ability.create!(
   name: "Second Wind",
@@ -2167,6 +2437,13 @@ Character.all.each do |char|
       CharacterAbility.create!(character: char, ability: reckless_attack, uses_remaining: nil)
       CharacterAbility.create!(character: char, ability: danger_sense, uses_remaining: nil)
     end
+  when "Bard"
+    CharacterAbility.create!(character: char, ability: bardic_inspiration, uses_remaining: 2)
+    CharacterAbility.create!(character: char, ability: jack_of_all_trades, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: song_of_rest, uses_remaining: 1)
+  when "Druid"
+    CharacterAbility.create!(character: char, ability: druidcraft, uses_remaining: nil)
+    CharacterAbility.create!(character: char, ability: wild_shape, uses_remaining: 1)
   when "Fighter"
     CharacterAbility.create!(character: char, ability: second_wind, uses_remaining: 1)
     CharacterAbility.create!(character: char, ability: fighting_style_defense, uses_remaining: nil)
