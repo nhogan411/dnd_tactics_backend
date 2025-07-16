@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_15_000010) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_16_000011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,7 +51,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_000010) do
     t.integer "modified_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "modifiers", default: []
     t.index ["character_id"], name: "index_ability_scores_on_character_id"
+    t.index ["modifiers"], name: "index_ability_scores_on_modifiers", using: :gin
   end
 
   create_table "backgrounds", force: :cascade do |t|
