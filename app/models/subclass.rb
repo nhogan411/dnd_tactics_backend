@@ -78,4 +78,136 @@ class Subclass < ApplicationRecord
   def full_name
     "#{display_subclass_type}: #{name}"
   end
+
+  # Subclass features and abilities
+  def features_gained_at_level(level)
+    subclass_feature_at_level(level).keys
+  end
+
+  def all_features_by_level(character_level)
+    features = {}
+    (available_at_level..character_level).each do |level|
+      level_features = features_gained_at_level(level)
+      features[level] = level_features unless level_features.empty?
+    end
+    features
+  end
+
+  def total_features(character_level)
+    all_features_by_level(character_level).values.flatten
+  end
+
+  def grants_spellcasting?
+    spells.any? || subclass_features.values.any? { |features| features.key?('spellcasting') }
+  end
+
+  def spellcasting_level
+    return nil unless grants_spellcasting?
+
+    # Calculate effective spellcasting level (some subclasses are 1/3 or 1/2 casters)
+    case character_class.name
+    when 'Paladin', 'Ranger' then 'half'
+    when 'Fighter', 'Rogue' then 'third'
+    else 'full'
+    end
+  end
+
+  def spell_slots_at_level(character_level)
+    return {} unless grants_spellcasting?
+
+    effective_level = case spellcasting_level
+                      when 'half' then (character_level / 2).ceil
+                      when 'third' then (character_level / 3).ceil
+                      else character_level
+                      end
+
+    character_class.spell_slots_at_level(effective_level)
+  end
+
+  def unique_proficiencies
+    base_profs = character_class.weapon_proficiencies + character_class.armor_proficiencies + character_class.skill_proficiencies.dig('available')
+    subclass_profs = proficiencies.values.flatten
+
+    subclass_profs - base_profs
+  end
+
+  def expanded_spell_list
+    # Some subclasses (like Warlock patrons) have expanded spell lists
+    return [] unless spells.any?
+
+    spells.select { |spell| spell.dig('expanded_list') == true }
+  end
+
+  def domain_spells
+    # For Cleric domains and similar
+    expanded_spell_list
+  end
+
+  def patron_spells
+    # For Warlock patrons
+    expanded_spell_list
+  end
+
+  def synergy_with_race(race_name)
+    # Calculate how well this subclass synergizes with a race
+    score = 0
+
+    # This is a simplified example - real implementation would be more complex
+    case name.downcase
+    when 'draconic bloodline'
+      score += 2 if race_name.downcase.include?('dragonborn')
+    when 'fiend'
+      score += 1 if race_name.downcase.include?('tiefling')
+    when 'archfey'
+      score += 1 if race_name.downcase.include?('elf')
+    end
+
+    score
+  end
+
+  def recommended_for_playstyle(playstyle)
+    # Simple playstyle recommendations
+    case playstyle.downcase
+    when 'damage'
+      %w[evocation draconic fiend].include?(name.downcase)
+    when 'support'
+      %w[life enchantment celestial].include?(name.downcase)
+    when 'control'
+      %w[divination enchantment archfey].include?(name.downcase)
+    when 'tank'
+      %w[abjuration devotion].include?(name.downcase)
+    else
+      false
+    end
+  end
+
+  # Audit and summary methods
+  def audit
+    {
+      name: name,
+      character_class: character_class.name,
+      subclass_type: display_subclass_type,
+      available_at_level: available_at_level,
+      grants_spellcasting: grants_spellcasting?,
+      spellcasting_level: spellcasting_level,
+      spells: spells,
+      proficiencies: proficiencies,
+      subclass_features: subclass_features,
+      unique_proficiencies: unique_proficiencies,
+      expanded_spell_list: expanded_spell_list
+    }
+  end
+
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      character_class: character_class.name,
+      subclass_type: display_subclass_type,
+      available_at_level: available_at_level,
+      grants_spellcasting: grants_spellcasting?,
+      spell_count: spells.count,
+      unique_proficiencies: unique_proficiencies.count
+    }
+  end
 end
