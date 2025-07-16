@@ -59,4 +59,31 @@ class Background < ApplicationRecord
   def random_flaw
     flaw_options.sample
   end
+
+  # Audit method for debugging and validation
+  def audit
+    {
+      name: name,
+      description: description,
+      skills: skill_proficiencies,
+      languages: language_proficiencies,
+      tools: tool_proficiencies,
+      equipment: equipment,
+      feature: has_feature? ? { name: feature_name, description: feature_description } : nil,
+      suggested_characteristics: suggested_characteristics
+    }
+  end
+
+  # Summary hash for API/UI
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      description: description,
+      skills: skill_proficiencies,
+      languages: language_proficiencies,
+      tools: tool_proficiencies,
+      feature: feature_name
+    }
+  end
 end

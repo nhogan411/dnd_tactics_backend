@@ -178,4 +178,46 @@ class Ability < ApplicationRecord
     else action_type.humanize
     end
   end
+
+  # Audit ability for a given character and level
+  def audit_for(character, level)
+    {
+      name: name,
+      type: ability_type,
+      action_type: action_type,
+      level_required: level_required,
+      available: meets_prerequisites?(character) && level >= level_required,
+      scaling: scales_with_level? ? scaling_at_level(level) : nil,
+      usage: display_uses,
+      damage: display_damage,
+      range: display_range,
+      duration: display_duration,
+      components: display_components,
+      prerequisites: prerequisites,
+      limited_uses: limited_uses?,
+      unlimited_uses: unlimited_uses?,
+      recharge: recharge,
+      has_recharge: has_recharge?,
+      has_damage: has_damage?,
+      has_saving_throw: has_saving_throw?,
+      has_components: has_components?
+    }
+  end
+
+  # Summary hash for API/UI
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      type: ability_type,
+      action_type: action_type,
+      level_required: level_required,
+      description: description,
+      range: display_range,
+      duration: display_duration,
+      damage: display_damage,
+      components: display_components,
+      usage: display_uses
+    }
+  end
 end

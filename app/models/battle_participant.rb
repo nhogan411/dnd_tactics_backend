@@ -68,6 +68,108 @@ class BattleParticipant < ApplicationRecord
     super || character.max_hp
   end
 
+  # Status checks
+  def active?
+    status == 'active'
+  end
+
+  def knocked_out?
+    status == 'knocked_out'
+  end
+
+  def dead?
+    current_hp <= 0
+  end
+
+  def alive?
+    current_hp > 0
+  end
+
+  # Position and movement
+  def has_position?
+    position.present?
+  end
+
+  def at_position?(x, y)
+    position == [x, y]
+  end
+
+  def move_to(x, y)
+    self.position = [x, y]
+    save
+  end
+
+  def distance_to(target)
+    return Float::INFINITY unless has_position? && target.has_position?
+
+    x1, y1 = position
+    x2, y2 = target.position
+    Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+  end
+
+  def adjacent_to?(target)
+    distance_to(target) <= 1.5 # Accounts for diagonal movement
+  end
+
+  # Turn management
+  def can_act?
+    active? && alive? && character.can_act?
+  end
+
+  def has_acted_this_turn?
+    # This would need to be tracked in battle logs or a separate field
+    false # Placeholder
+  end
+
+  # Battle statistics
+  def damage_dealt
+    battle.participant_damage(character)
+  end
+
+  def healing_done
+    battle.participant_healing(character)
+  end
+
+  def times_attacked
+    battle.battle_logs.where(actor: character, action_type: 'attack').count
+  end
+
+  def times_hit
+    battle.battle_logs.where(target: character, action_type: 'damage').count
+  end
+
+  # Audit and summary methods
+  def audit
+    {
+      id: id,
+      character: character.name,
+      team: team,
+      status: status,
+      current_hp: current_hp,
+      max_hp: character.max_hp,
+      position: position,
+      battle_ability_modifiers: battle_ability_modifiers,
+      damage_dealt: damage_dealt,
+      healing_done: healing_done,
+      times_attacked: times_attacked,
+      times_hit: times_hit,
+      can_act: can_act?,
+      alive: alive?
+    }
+  end
+
+  def summary_hash
+    {
+      id: id,
+      character_name: character.name,
+      team: team,
+      status: status,
+      current_hp: current_hp,
+      max_hp: character.max_hp,
+      position: position
+    }
+  end
+
   def attack(target)
     battle = self.battle
     attacker_char = self.character

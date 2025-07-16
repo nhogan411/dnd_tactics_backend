@@ -88,4 +88,87 @@ class Feat < ApplicationRecord
 
     benefit_strings.join("; ")
   end
+
+  # Feat application helpers
+  def apply_to_character(character, options = {})
+    return false unless meets_prerequisites?(character)
+
+    # Apply ability score increases
+    if half_feat? && options[:ability_increase]
+      character.increase_ability_score(options[:ability_increase], 1)
+    end
+
+    # Apply other benefits
+    apply_benefits(character, options)
+
+    true
+  end
+
+  def apply_benefits(character, options = {})
+    return if benefits.empty?
+
+    benefits.each do |type, value|
+      case type
+      when 'proficiencies'
+        value.each do |proficiency|
+          character.add_proficiency('skill', proficiency)
+        end
+      when 'spells'
+        value.each do |spell_name|
+          spell = Spell.find_by(name: spell_name)
+          character.learn_spell(spell, source: 'feat') if spell
+        end
+      when 'special'
+        # Handle special feat benefits - would need custom logic per feat
+        apply_special_benefit(character, value, options)
+      end
+    end
+  end
+
+  def apply_special_benefit(character, benefit_description, options)
+    # This would contain custom logic for each feat's special benefits
+    # For now, just log it
+    Rails.logger.info "Applied special benefit for feat #{name}: #{benefit_description}"
+  end
+
+  def compatible_with_character?(character)
+    # Check if feat makes sense for the character's build
+    return false if character.has_feat?(name)
+    return false unless meets_prerequisites?(character)
+
+    true
+  end
+
+  def recommended_for_class?(class_name)
+    # Simple heuristic based on feat benefits and class synergy
+    return true if benefits.key?('spells') && ['wizard', 'sorcerer', 'warlock'].include?(class_name.downcase)
+    return true if benefits.key?('proficiencies') && benefits['proficiencies'].include?('Athletics') && ['fighter', 'barbarian'].include?(class_name.downcase)
+
+    false
+  end
+
+  # Audit and summary methods
+  def audit
+    {
+      name: name,
+      description: description,
+      half_feat: half_feat,
+      prerequisites: prerequisites,
+      benefits: benefits,
+      ability_score_increases: ability_score_increases,
+      prerequisite_text: display_prerequisites,
+      benefit_text: display_benefits
+    }
+  end
+
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      description: description,
+      half_feat: half_feat,
+      prerequisites: display_prerequisites,
+      benefits: display_benefits
+    }
+  end
 end

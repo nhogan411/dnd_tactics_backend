@@ -73,4 +73,155 @@ class Subrace < ApplicationRecord
     return "None" if effective_languages.empty?
     effective_languages.join(", ")
   end
+
+  # Subrace-specific helpers
+  def total_ability_bonuses
+    ability_score_modifiers.values.sum
+  end
+
+  def primary_ability_bonus
+    ability_score_modifiers.max_by { |_, value| value }
+  end
+
+  def grants_spells?
+    racial_spells.any?
+  end
+
+  def innate_spellcasting?
+    grants_spells?
+  end
+
+  def spell_count
+    racial_spells.size
+  end
+
+  def unique_traits
+    subrace_traits = traits || {}
+    race_traits = race.traits || {}
+
+    # Find traits that are unique to this subrace
+    subrace_traits.keys - race_traits.keys
+  end
+
+  def inherited_traits
+    subrace_traits = traits || {}
+    race_traits = race.traits || {}
+
+    # Find traits that are inherited from race
+    subrace_traits.keys & race_traits.keys
+  end
+
+  def new_proficiencies
+    race_profs = race.proficiencies || {}
+    subrace_profs = proficiencies || {}
+
+    new_profs = {}
+    subrace_profs.each do |type, profs|
+      race_type_profs = race_profs[type] || []
+      new_profs[type] = profs - race_type_profs
+    end
+
+    new_profs.reject { |_, profs| profs.empty? }
+  end
+
+  def additional_languages
+    (languages || []) - race.languages
+  end
+
+  def speed_modifier
+    return 0 unless speed
+    speed - race.speed
+  end
+
+  def has_speed_modifier?
+    speed_modifier != 0
+  end
+
+  def size_change?
+    size && size != race.size
+  end
+
+  # Character creation helpers
+  def recommended_classes
+    # Simple recommendations based on ability score bonuses
+    recommendations = []
+
+    ability_score_modifiers.each do |ability, bonus|
+      next if bonus <= 0
+
+      case ability
+      when 'STR'
+        recommendations += ['Fighter', 'Barbarian', 'Paladin']
+      when 'DEX'
+        recommendations += ['Rogue', 'Ranger', 'Monk']
+      when 'CON'
+        recommendations += ['Barbarian', 'Fighter']
+      when 'INT'
+        recommendations += ['Wizard']
+      when 'WIS'
+        recommendations += ['Cleric', 'Druid', 'Ranger']
+      when 'CHA'
+        recommendations += ['Bard', 'Sorcerer', 'Warlock', 'Paladin']
+      end
+    end
+
+    recommendations.uniq
+  end
+
+  def synergy_score_with_class(class_name)
+    # Calculate how well this subrace synergizes with a given class
+    score = 0
+
+    # Check ability score bonuses
+    case class_name.downcase
+    when 'fighter', 'barbarian', 'paladin'
+      score += ability_score_modifiers['STR'] || 0
+    when 'rogue', 'ranger', 'monk'
+      score += ability_score_modifiers['DEX'] || 0
+    when 'wizard'
+      score += ability_score_modifiers['INT'] || 0
+    when 'cleric', 'druid'
+      score += ability_score_modifiers['WIS'] || 0
+    when 'bard', 'sorcerer', 'warlock'
+      score += ability_score_modifiers['CHA'] || 0
+    end
+
+    # Bonus for Constitution (helpful for all classes)
+    score += (ability_score_modifiers['CON'] || 0) * 0.5
+
+    score
+  end
+
+  # Audit and summary methods
+  def audit
+    {
+      name: name,
+      race: race.name,
+      size: effective_size,
+      speed: effective_speed,
+      languages: effective_languages,
+      proficiencies: effective_proficiencies,
+      traits: effective_traits,
+      ability_modifiers: ability_score_modifiers,
+      spells: racial_spells,
+      unique_traits: unique_traits,
+      new_proficiencies: new_proficiencies,
+      additional_languages: additional_languages,
+      recommended_classes: recommended_classes
+    }
+  end
+
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      race: race.name,
+      size: effective_size,
+      speed: effective_speed,
+      ability_modifiers: display_ability_modifiers,
+      languages: display_languages,
+      spells: racial_spells,
+      recommended_classes: recommended_classes.first(3)
+    }
+  end
 end

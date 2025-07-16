@@ -92,4 +92,91 @@ class CharacterClass < ApplicationRecord
     else 2
     end
   end
+
+  # Spell slot progression
+  def spell_slots_at_level(character_level)
+    return {} unless is_spellcaster?
+
+    # This should be customized per class
+    spellcasting.dig('slots', character_level.to_s) || {}
+  end
+
+  def cantrips_known_at_level(character_level)
+    return 0 unless is_spellcaster?
+
+    spellcasting.dig('cantrips_known', character_level.to_s) || 0
+  end
+
+  def spells_known_at_level(character_level)
+    return 0 unless is_spellcaster?
+
+    spellcasting.dig('spells_known', character_level.to_s) || 0
+  end
+
+  def max_spell_level_at_level(character_level)
+    return 0 unless is_spellcaster?
+
+    # Calculate highest spell level available
+    slots = spell_slots_at_level(character_level)
+    slots.keys.map(&:to_i).max || 0
+  end
+
+  # Character creation helpers
+  def starting_equipment_options
+    starting_equipment.dig('options') || []
+  end
+
+  def starting_equipment_fixed
+    starting_equipment.dig('fixed') || []
+  end
+
+  def starting_wealth
+    starting_equipment.dig('wealth') || { 'dice' => '0d4', 'multiplier' => 10 }
+  end
+
+  def all_class_features
+    class_features.values.flatten.uniq
+  end
+
+  def features_gained_at_level(level)
+    class_feature_at_level(level).keys
+  end
+
+  def total_features_by_level(level)
+    features = []
+    (1..level).each do |l|
+      features += features_gained_at_level(l)
+    end
+    features
+  end
+
+  # Audit and summary methods
+  def audit
+    {
+      name: name,
+      hit_die: hit_die,
+      primary_ability: primary_ability,
+      saving_throw_proficiencies: saving_throw_proficiencies,
+      skill_proficiencies: skill_proficiencies,
+      weapon_proficiencies: weapon_proficiencies,
+      armor_proficiencies: armor_proficiencies,
+      spellcasting: spellcasting,
+      multiclass_requirements: multiclass_requirements,
+      class_features: class_features,
+      starting_equipment: starting_equipment,
+      subclasses: subclasses.map(&:name)
+    }
+  end
+
+  def summary_hash
+    {
+      id: id,
+      name: name,
+      hit_die: hit_die,
+      primary_ability: primary_ability,
+      spellcaster: is_spellcaster?,
+      spellcasting_ability: spellcasting_ability,
+      subclasses: subclasses.map(&:name)
+    }
+  end
 end

@@ -879,6 +879,118 @@ class Character < ApplicationRecord
     end
   end
 
+  # Utility methods for character management
+  def full_name
+    "#{name} the #{race.name} #{character_class.name}"
+  end
+
+  def short_description
+    "Level #{level} #{race.name} #{character_class.name}"
+  end
+
+  def character_sheet_summary
+    {
+      name: name,
+      race: race.name,
+      subrace: subrace.name,
+      character_class: character_class.name,
+      subclass: subclass.name,
+      level: level,
+      background: background&.name,
+      hp: "#{current_hp}/#{max_hp}",
+      ac: armor_class,
+      speed: movement_speed,
+      proficiency_bonus: proficiency_bonus,
+      abilities: {
+        str: "#{strength} (#{strength_modifier >= 0 ? '+' : ''}#{strength_modifier})",
+        dex: "#{dexterity} (#{dexterity_modifier >= 0 ? '+' : ''}#{dexterity_modifier})",
+        con: "#{constitution} (#{constitution_modifier >= 0 ? '+' : ''}#{constitution_modifier})",
+        int: "#{intelligence} (#{intelligence_modifier >= 0 ? '+' : ''}#{intelligence_modifier})",
+        wis: "#{wisdom} (#{wisdom_modifier >= 0 ? '+' : ''}#{wisdom_modifier})",
+        cha: "#{charisma} (#{charisma_modifier >= 0 ? '+' : ''}#{charisma_modifier})"
+      },
+      skills: skill_proficiencies,
+      expertise: skill_expertise,
+      languages: language_proficiencies,
+      equipment: character_items.includes(:item).map(&:item).map(&:name),
+      spellcasting: is_spellcaster? ? {
+        ability: spellcasting_ability,
+        save_dc: spell_save_dc,
+        attack_bonus: spell_attack_bonus,
+        spell_slots: spell_slots
+      } : nil
+    }
+  end
+
+  def audit_stats
+    {
+      basic_info: {
+        name: name,
+        level: level,
+        experience: "#{experience_points}/#{next_level_xp}",
+        can_level_up: can_level_up?
+      },
+      combat_stats: {
+        hp: "#{current_hp}/#{max_hp}",
+        temp_hp: temporary_hp,
+        ac: armor_class,
+        initiative: initiative_modifier,
+        proficiency_bonus: proficiency_bonus,
+        death_saves: "#{death_save_successes}/#{death_save_failures}"
+      },
+      abilities: ability_scores.map { |score|
+        {
+          type: score.score_type,
+          base: score.base_score,
+          modified: score.modified_score,
+          modifier: score.modifier,
+          breakdown: score.breakdown_string
+        }
+      },
+      proficiencies: {
+        skills: skill_proficiencies,
+        expertise: skill_expertise,
+        weapons: weapon_proficiencies,
+        armor: armor_proficiencies,
+        tools: tool_proficiencies,
+        languages: language_proficiencies
+      },
+      equipment: {
+        currency: "#{currency_gp}gp #{currency_sp}sp #{currency_cp}cp",
+        weight: "#{carrying_weight}/#{carrying_capacity} lbs",
+        encumbered: is_encumbered?,
+        attuned: "#{attuned_items_count}/#{attunement_slots}"
+      },
+      spellcasting: is_spellcaster? ? {
+        ability: spellcasting_ability,
+        save_dc: spell_save_dc,
+        attack_bonus: spell_attack_bonus,
+        spell_slots: spell_slots,
+        spell_slots_used: spell_slots_used,
+        spells_known: spells.count,
+        cantrips_known: cantrips_known.count
+      } : nil,
+      conditions: conditions,
+      feats: feats.map(&:name)
+    }
+  end
+
+  def battle_ready?
+    alive? && can_act? && !is_incapacitated?
+  end
+
+  def combat_summary
+    {
+      name: name,
+      hp: "#{current_hp}/#{max_hp}",
+      ac: armor_class,
+      speed: effective_movement_speed,
+      conditions: conditions.keys,
+      can_act: can_act?,
+      incapacitated: is_incapacitated?
+    }
+  end
+
   private
 
   def calculate_derived_stats
